@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface PublicSiteHeaderProps {
   active?: "home" | "templates";
@@ -12,20 +15,40 @@ const navLinks = [
 ];
 
 export default function PublicSiteHeader({ active }: PublicSiteHeaderProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-background/85">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-3" aria-label="OpenReply home">
-          <span className="text-lg font-bold text-white">OpenReply</span>
+    <header className="material-bar sticky top-0 z-40 border-b border-border">
+      <div className="mx-auto flex h-[4.5rem] w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="inline-flex min-h-11 items-center rounded-lg pr-2"
+          aria-label="OpenReply home"
+        >
+          <span className="text-lg font-bold tracking-[-0.02em] text-foreground">
+            OpenReply
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
           {navLinks.map((link) => (
             <Link
               key={link.key}
               href={link.href}
-              className={`text-sm font-medium transition ${
-                active === link.key ? "text-white" : "text-zinc-400 hover:text-white"
+              aria-current={active === link.key ? "page" : undefined}
+              className={`pressable inline-flex min-h-11 items-center rounded-lg px-3.5 text-sm font-semibold ${
+                active === link.key
+                  ? "bg-accent/10 text-accent"
+                  : "text-muted hover:bg-surface hover:text-foreground"
               }`}
             >
               {link.label}
@@ -33,19 +56,70 @@ export default function PublicSiteHeader({ active }: PublicSiteHeaderProps) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="hidden items-center gap-1.5 md:flex">
           <Link
             href="/login"
-            className="hidden px-4 py-2 text-sm font-semibold text-zinc-300 transition hover:text-white sm:inline-flex"
+            className="pressable inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-semibold text-muted hover:bg-surface hover:text-foreground"
           >
             Sign in
           </Link>
           <Link
             href="/login"
-            className="inline-flex items-center justify-center bg-cyan-300 px-4 py-2 text-sm font-bold text-zinc-950 transition hover:bg-cyan-200"
+            className="pressable inline-flex min-h-11 items-center justify-center rounded-lg bg-accent px-5 text-sm font-bold text-accent-foreground hover:bg-accent-hover"
           >
             Start free
           </Link>
+        </div>
+
+        <div className="relative md:hidden">
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            aria-controls="public-mobile-navigation"
+            className="pressable flex min-h-11 cursor-pointer items-center justify-center rounded-lg border border-border bg-background px-4 text-sm font-semibold text-foreground hover:bg-surface"
+          >
+            {menuOpen ? "Close" : "Menu"}
+          </button>
+
+          {menuOpen && (
+          <div id="public-mobile-navigation" className="absolute right-0 top-[calc(100%+0.75rem)] w-[min(20rem,calc(100vw-2rem))] rounded-2xl border border-border bg-background p-2">
+            <nav className="grid" aria-label="Mobile navigation">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.key}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  aria-current={active === link.key ? "page" : undefined}
+                  className={`pressable flex min-h-11 items-center rounded-lg px-3.5 text-sm font-semibold ${
+                    active === link.key
+                      ? "bg-accent/10 text-accent"
+                      : "text-foreground hover:bg-surface"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="my-2 border-t border-border" />
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="pressable inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-3 text-sm font-semibold text-foreground hover:bg-surface"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="pressable inline-flex min-h-11 items-center justify-center rounded-lg bg-accent px-3 text-sm font-bold text-accent-foreground hover:bg-accent-hover"
+              >
+                Start free
+              </Link>
+            </div>
+          </div>
+          )}
         </div>
       </div>
     </header>

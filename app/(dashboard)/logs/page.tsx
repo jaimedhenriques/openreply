@@ -107,7 +107,7 @@ export default function LogsPage() {
               key={status}
               onClick={() => handleFilterChange(status)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium transition-all
+                pressable min-h-11 px-3 py-2 rounded-lg text-xs font-medium transition-colors
                 ${
                   statusFilter === status
                     ? "bg-accent/15 text-accent border border-accent/20"
@@ -212,7 +212,7 @@ export default function LogsPage() {
                   setLoading(true);
                   setPage(page - 1);
                 }}
-                className="px-3 py-1.5 rounded-lg text-xs font-medium text-muted border border-border hover:text-foreground hover:border-border-hover transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="pressable min-h-11 px-3 py-2 rounded-lg text-xs font-medium text-muted border border-border hover:text-foreground hover:border-border-hover transition-colors disabled:opacity-30 disabled:pointer-events-none"
               >
                 Previous
               </button>
@@ -225,7 +225,7 @@ export default function LogsPage() {
                   setLoading(true);
                   setPage(page + 1);
                 }}
-                className="px-3 py-1.5 rounded-lg text-xs font-medium text-muted border border-border hover:text-foreground hover:border-border-hover transition-all disabled:opacity-30 disabled:pointer-events-none"
+                className="pressable min-h-11 px-3 py-2 rounded-lg text-xs font-medium text-muted border border-border hover:text-foreground hover:border-border-hover transition-colors disabled:opacity-30 disabled:pointer-events-none"
               >
                 Next
               </button>

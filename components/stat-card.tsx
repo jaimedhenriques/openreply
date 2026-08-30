@@ -7,17 +7,29 @@
 interface StatCardProps {
   label: string;
   value: string | number;
+  description?: string;
   trend?: string;
   trendUp?: boolean;
 }
 
-export default function StatCard({ label, value, trend, trendUp }: StatCardProps) {
+export default function StatCard({
+  label,
+  value,
+  description,
+  trend,
+  trendUp,
+}: StatCardProps) {
   return (
-    <div className="panel rounded p-4">
-      <p className="text-sm text-muted">{label}</p>
-      <p className="text-2xl font-semibold text-foreground mt-1">{value}</p>
+    <div className="panel rounded-xl p-4 sm:p-5">
+      <p className="text-sm font-medium text-muted">{label}</p>
+      <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight text-foreground">
+        {value}
+      </p>
+      {description && <p className="mt-1 text-xs text-muted">{description}</p>}
       {trend && (
-        <p className={`text-xs mt-1 ${trendUp ? "text-success" : "text-error"}`}>
+        <p
+          className={`mt-1 text-xs tabular-nums ${trendUp ? "text-success" : "text-error"}`}
+        >
           {trendUp ? "Up" : "Down"} {trend}
         </p>
       )}

@@ -21,25 +21,30 @@ export default function InvitationAcceptCard({
   async function acceptInvite() {
     setBusy(true);
     setMessage(null);
-    const response = await fetch("/api/workspace/invitations/accept", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    });
-    const payload = await response.json();
-    if (payload.success) {
-      router.push("/dashboard");
-      return;
+    try {
+      const response = await fetch("/api/workspace/invitations/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+      const payload = await response.json();
+      if (response.ok && payload.success) {
+        router.push("/dashboard");
+        return;
+      }
+      setMessage(payload.error ?? "Could not accept invitation");
+    } catch {
+      setMessage("Could not accept the invitation. Check your connection and try again.");
+    } finally {
+      setBusy(false);
     }
-    setMessage(payload.error ?? "Could not accept invitation");
-    setBusy(false);
   }
 
   if (!isSignedIn) {
     return (
       <a
         href="/login"
-        className="inline-flex items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-hover"
+        className="pressable inline-flex min-h-11 items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground hover:bg-accent-hover"
       >
         Sign in to accept
       </a>
@@ -52,11 +57,11 @@ export default function InvitationAcceptCard({
         type="button"
         onClick={acceptInvite}
         disabled={busy}
-        className="inline-flex items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-hover disabled:opacity-50"
+        className="pressable inline-flex min-h-11 items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground hover:bg-accent-hover disabled:cursor-wait disabled:opacity-50"
       >
         {busy ? "Accepting..." : "Accept invitation"}
       </button>
-      {message && <p className="text-sm text-error">{message}</p>}
+      {message && <p role="alert" className="text-sm text-error">{message}</p>}
       <p className="text-xs text-muted">
         Use the magic link account for {invitedEmail}.
       </p>

@@ -67,7 +67,11 @@ export default function SettingsPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<"ADMIN" | "MEMBER">("MEMBER");
+  const [instagramError, setInstagramError] = useState<string | null>(null);
   const [memberError, setMemberError] = useState<string | null>(null);
+  const [billingError, setBillingError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
+  const [copiedInviteId, setCopiedInviteId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -75,16 +79,23 @@ export default function SettingsPage() {
       fetch("/api/workspace/members").then((res) => res.json()),
     ])
       .then(([statsPayload, membersPayload]) => {
-        if (statsPayload.success) setData(statsPayload.data);
-        if (membersPayload.success) setMembersData(membersPayload.data);
+        if (!statsPayload.success || !membersPayload.success) {
+          throw new Error("settings_unavailable");
+        }
+        setData(statsPayload.data);
+        setMembersData(membersPayload.data);
       })
+      .catch(() => setPageError("Settings could not be loaded. Check your connection and try again."))
       .finally(() => setLoading(false));
   }, []);
 
   async function refreshMembers() {
     const res = await fetch("/api/workspace/members");
     const payload = await res.json();
-    if (payload.success) setMembersData(payload.data);
+    if (!res.ok || !payload.success) {
+      throw new Error(payload.error ?? "Could not refresh workspace members");
+    }
+    setMembersData(payload.data);
   }
 
   async function disconnectInstagram(instagramAccountId: string) {
@@ -92,78 +103,156 @@ export default function SettingsPage() {
       return;
     }
 
+    setInstagramError(null);
     setBusy(`disconnect:${instagramAccountId}`);
-    await fetch("/api/instagram/disconnect", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ instagramAccountId }),
-    });
-    window.location.reload();
+    try {
+      const response = await fetch("/api/instagram/disconnect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ instagramAccountId }),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error ?? "Could not disconnect Instagram");
+      }
+      window.location.reload();
+    } catch (disconnectError) {
+      setInstagramError(
+        disconnectError instanceof Error
+          ? disconnectError.message
+          : "Could not disconnect Instagram"
+      );
+      setBusy(null);
+    }
   }
 
   async function inviteMember(event: React.FormEvent) {
     event.preventDefault();
     setMemberError(null);
     setBusy("invite");
-    const res = await fetch("/api/workspace/members", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: inviteEmail, role: inviteRole }),
-    });
-    const payload = await res.json();
-    if (payload.success) {
+    try {
+      const res = await fetch("/api/workspace/members", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: inviteEmail, role: inviteRole }),
+      });
+      const payload = await res.json();
+      if (!res.ok || !payload.success) {
+        throw new Error(payload.error ?? "Could not invite member");
+      }
       setMembersData(payload.data);
       setInviteEmail("");
-    } else {
-      setMemberError(payload.error ?? "Could not invite member");
+    } catch (inviteError) {
+      setMemberError(
+        inviteError instanceof Error
+          ? inviteError.message
+          : "Could not invite member"
+      );
+    } finally {
+      setBusy(null);
     }
-    setBusy(null);
   }
 
   async function removeInvitation(invitationId: string) {
     setBusy(`invite:${invitationId}`);
-    await fetch("/api/workspace/members", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ invitationId }),
-    });
-    await refreshMembers();
-    setBusy(null);
+    setMemberError(null);
+    try {
+      const response = await fetch("/api/workspace/members", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ invitationId }),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error ?? "Could not revoke invitation");
+      }
+      await refreshMembers();
+    } catch (revokeError) {
+      setMemberError(
+        revokeError instanceof Error
+          ? revokeError.message
+          : "Could not revoke invitation"
+      );
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function copyInvitation(invitationId: string, inviteUrl: string) {
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      setCopiedInviteId(invitationId);
+      window.setTimeout(() => setCopiedInviteId(null), 2000);
+    } catch {
+      setMemberError("The invite link could not be copied. Select the link and copy it manually.");
+    }
   }
 
   async function startCheckout(interval: "monthly" | "annual") {
+    setBillingError(null);
     setBusy(`checkout:${interval}`);
-    const res = await fetch("/api/billing/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ interval }),
-    });
-    const payload = await res.json();
-    if (payload.success && payload.url) {
+    try {
+      const res = await fetch("/api/billing/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ interval }),
+      });
+      const payload = await res.json();
+      if (!res.ok || !payload.success || !payload.url) {
+        throw new Error(payload.error ?? "Could not start checkout");
+      }
       window.location.assign(payload.url);
-      return;
+    } catch (checkoutError) {
+      setBillingError(
+        checkoutError instanceof Error
+          ? checkoutError.message
+          : "Could not start checkout"
+      );
+      setBusy(null);
     }
-    setMemberError(payload.error ?? "Could not start checkout");
-    setBusy(null);
   }
 
   async function openBillingPortal() {
+    setBillingError(null);
     setBusy("portal");
-    const res = await fetch("/api/billing/portal", { method: "POST" });
-    const payload = await res.json();
-    if (payload.success && payload.url) {
+    try {
+      const res = await fetch("/api/billing/portal", { method: "POST" });
+      const payload = await res.json();
+      if (!res.ok || !payload.success || !payload.url) {
+        throw new Error(payload.error ?? "Could not open billing");
+      }
       window.location.assign(payload.url);
-      return;
+    } catch (portalError) {
+      setBillingError(
+        portalError instanceof Error
+          ? portalError.message
+          : "Could not open billing"
+      );
+      setBusy(null);
     }
-    setMemberError(payload.error ?? "Could not open billing");
-    setBusy(null);
   }
 
   if (loading) {
-    return <div className="panel rounded p-8 h-64" />;
+    return <div className="panel h-64 animate-pulse rounded-xl p-8" aria-label="Loading settings" />;
   }
 
-  const accounts = data?.instagramAccounts ?? [];
+  if (pageError || !data || !membersData) {
+    return (
+      <div className="mx-auto max-w-2xl rounded-xl border border-error/25 bg-error/10 p-6" role="alert">
+        <h2 className="text-base font-semibold text-error">Settings unavailable</h2>
+        <p className="mt-2 text-sm leading-6 text-error">{pageError ?? "Settings data is incomplete."}</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="pressable mt-5 inline-flex min-h-11 items-center rounded-full bg-error px-5 py-2 text-sm font-semibold text-accent-foreground"
+        >
+          Reload settings
+        </button>
+      </div>
+    );
+  }
+
+  const accounts = data.instagramAccounts;
   const canManageMembers =
     membersData?.currentUserRole === "OWNER" ||
     membersData?.currentUserRole === "ADMIN";
@@ -186,8 +275,31 @@ export default function SettingsPage() {
         <BillingNotice />
       </Suspense>
 
-      <section className="panel rounded p-4 sm:p-6">
+      <nav aria-label="Settings sections" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+        {[
+          ["Instagram", "#instagram-settings"],
+          ["Team", "#team-settings"],
+          ["Billing", "#billing-settings"],
+          ["Usage", "#usage-settings"],
+        ].map(([label, href]) => (
+          <a
+            key={href}
+            href={href}
+            className="pressable inline-flex min-h-11 shrink-0 items-center rounded-full border border-border bg-background px-4 text-sm font-medium text-muted hover:border-border-hover hover:text-foreground"
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+
+      <section className="panel rounded-xl p-4 sm:p-6" id="instagram-settings">
         <h2 className="text-base font-semibold mb-6">Instagram Connection</h2>
+
+        {instagramError && (
+          <p className="mb-4 text-sm text-error" role="alert">
+            {instagramError}
+          </p>
+        )}
 
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-3 py-3 border-b border-border">
@@ -247,10 +359,10 @@ export default function SettingsPage() {
                 <button
                   onClick={() => disconnectInstagram(account.id)}
                   disabled={busy === `disconnect:${account.id}`}
-                  className="inline-flex items-center justify-center rounded border border-error/20 px-4 py-2 text-sm font-medium text-error transition-all hover:border-error/40 hover:bg-error/10 disabled:opacity-50"
+                  className="pressable inline-flex min-h-11 items-center justify-center rounded-full border border-error/20 px-4 py-2 text-sm font-medium text-error hover:border-error/40 hover:bg-error/10 disabled:opacity-50"
                 >
                   {busy === `disconnect:${account.id}`
-                    ? "Disconnecting..."
+                    ? "Disconnecting…"
                     : "Disconnect"}
                 </button>
               </div>
@@ -262,7 +374,7 @@ export default function SettingsPage() {
           {accounts.length === 0 ? (
             <a
               href="/api/instagram/connect"
-              className="px-4 py-2 rounded text-sm font-medium transition-colors bg-accent text-white hover:bg-accent-hover"
+              className="pressable inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-foreground hover:bg-accent-hover"
             >
               Connect Instagram
             </a>
@@ -274,7 +386,7 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className="panel rounded p-4 sm:p-6">
+      <section className="panel rounded-xl p-4 sm:p-6" id="team-settings">
         <h2 className="text-base font-semibold mb-6">Team</h2>
         <div className="space-y-3">
           {membersData?.members.map((member) => (
@@ -317,18 +429,16 @@ export default function SettingsPage() {
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      onClick={() =>
-                        void navigator.clipboard?.writeText(invitation.inviteUrl)
-                      }
-                      className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:border-border-hover hover:text-foreground"
+                      onClick={() => void copyInvitation(invitation.id, invitation.inviteUrl)}
+                      className="pressable min-h-11 rounded-full border border-border px-4 py-2 text-xs font-medium text-muted hover:border-border-hover hover:text-foreground"
                     >
-                      Copy
+                      {copiedInviteId === invitation.id ? "Copied" : "Copy link"}
                     </button>
                     <button
                       type="button"
                       onClick={() => removeInvitation(invitation.id)}
                       disabled={busy === `invite:${invitation.id}`}
-                      className="rounded-lg border border-error/20 px-3 py-1.5 text-xs font-medium text-error transition-colors hover:bg-error/10 disabled:opacity-50"
+                      className="pressable min-h-11 rounded-full border border-error/20 px-4 py-2 text-xs font-medium text-error hover:bg-error/10 disabled:opacity-50"
                     >
                       Revoke
                     </button>
@@ -342,41 +452,53 @@ export default function SettingsPage() {
         {canManageMembers && (
           <form
             onSubmit={inviteMember}
-            className="mt-6 grid gap-3 border-t border-border pt-4 sm:grid-cols-[1fr_140px_auto]"
+            className="mt-6 grid gap-3 border-t border-border pt-5 sm:grid-cols-[1fr_140px_auto] sm:items-end"
           >
-            <input
-              type="email"
-              value={inviteEmail}
-              onChange={(event) => setInviteEmail(event.target.value)}
-              placeholder="teammate@agency.com"
-              className="rounded border border-border bg-surface px-4 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent/40"
-              required
-            />
-            <select
-              value={inviteRole}
-              onChange={(event) =>
-                setInviteRole(event.target.value as "ADMIN" | "MEMBER")
-              }
-              className="rounded border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent/40"
-            >
-              <option value="MEMBER">Member</option>
-              <option value="ADMIN">Admin</option>
-            </select>
+            <label className="grid gap-2 text-sm font-medium text-foreground">
+              Email address
+              <input
+                type="email"
+                name="inviteEmail"
+                value={inviteEmail}
+                onChange={(event) => setInviteEmail(event.target.value)}
+                placeholder="teammate@agency.com…"
+                autoComplete="email"
+                inputMode="email"
+                spellCheck={false}
+                aria-describedby={memberError ? "team-error" : undefined}
+                className="min-h-11 rounded-xl border border-border bg-background px-4 py-2 text-sm font-normal text-foreground focus:border-accent"
+                required
+              />
+            </label>
+            <label className="grid gap-2 text-sm font-medium text-foreground">
+              Role
+              <select
+                name="inviteRole"
+                value={inviteRole}
+                onChange={(event) =>
+                  setInviteRole(event.target.value as "ADMIN" | "MEMBER")
+                }
+                className="min-h-11 rounded-xl border border-border bg-background px-3 py-2 text-sm font-normal text-foreground focus:border-accent"
+              >
+                <option value="MEMBER">Member</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+            </label>
             <button
               type="submit"
               disabled={busy === "invite"}
-              className="rounded bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
+              className="pressable min-h-11 rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground hover:bg-accent-hover disabled:opacity-50"
             >
-              {busy === "invite" ? "Inviting..." : "Invite"}
+              {busy === "invite" ? "Inviting…" : "Send invite"}
             </button>
             {memberError && (
-              <p className="sm:col-span-3 text-sm text-error">{memberError}</p>
+              <p id="team-error" role="alert" className="sm:col-span-3 text-sm text-error">{memberError}</p>
             )}
           </form>
         )}
       </section>
 
-      <section className="panel rounded p-4 sm:p-6">
+      <section className="panel rounded-xl p-4 sm:p-6" id="billing-settings">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
@@ -415,9 +537,9 @@ export default function SettingsPage() {
               type="button"
               onClick={openBillingPortal}
               disabled={busy === "portal"}
-              className="rounded border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-border-hover disabled:opacity-50"
+              className="pressable min-h-11 rounded-full border border-border px-5 py-2 text-sm font-semibold text-foreground hover:border-border-hover disabled:opacity-50"
             >
-              {busy === "portal" ? "Opening..." : "Manage billing"}
+              {busy === "portal" ? "Opening…" : "Manage billing"}
             </button>
           ) : (
             <div className="flex flex-col gap-2 sm:items-end">
@@ -425,24 +547,24 @@ export default function SettingsPage() {
                 type="button"
                 onClick={() => startCheckout("monthly")}
                 disabled={busy?.startsWith("checkout:")}
-                className="rounded bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
+                className="pressable min-h-11 rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground hover:bg-accent-hover disabled:opacity-50"
               >
-                {busy === "checkout:monthly" ? "Opening..." : "Choose £19 monthly"}
+                {busy === "checkout:monthly" ? "Opening…" : "Choose £19 monthly"}
               </button>
               <button
                 type="button"
                 onClick={() => startCheckout("annual")}
                 disabled={busy?.startsWith("checkout:")}
-                className="rounded border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-border-hover disabled:opacity-50"
+                className="pressable min-h-11 rounded-full border border-border px-5 py-2 text-sm font-semibold text-foreground hover:border-border-hover disabled:opacity-50"
               >
-                {busy === "checkout:annual" ? "Opening..." : "Choose £190 yearly"}
+                {busy === "checkout:annual" ? "Opening…" : "Choose £190 yearly"}
               </button>
               {data?.workspace.stripeCustomerId && (
                 <button
                   type="button"
                   onClick={openBillingPortal}
                   disabled={busy === "portal"}
-                  className="px-3 py-1 text-xs font-medium text-muted underline underline-offset-2 disabled:opacity-50"
+                  className="inline-flex min-h-11 items-center px-3 py-1 text-xs font-medium text-muted underline underline-offset-2 disabled:opacity-50"
                 >
                   Open previous billing account
                 </button>
@@ -450,12 +572,12 @@ export default function SettingsPage() {
             </div>
           )}
         </div>
-        {memberError && (
-          <p className="mt-4 text-sm text-error">{memberError}</p>
+        {billingError && (
+          <p className="mt-4 text-sm text-error" role="alert">{billingError}</p>
         )}
       </section>
 
-      <section className="panel rounded p-4 sm:p-6">
+      <section className="panel rounded-xl p-4 sm:p-6" id="usage-settings">
         <h2 className="text-base font-semibold mb-6">Usage</h2>
         <div className="flex items-center justify-between gap-3 py-3">
           <div>
@@ -470,7 +592,7 @@ export default function SettingsPage() {
                 : "100 included in the trial. Upgrade to keep campaigns sending."}
             </p>
           </div>
-          <span className="text-sm font-semibold text-foreground">
+          <span className="text-sm font-semibold tabular-nums text-foreground">
             {data?.workspace.dmsSentThisPeriod ?? 0} /{" "}
             {isSelfHosted
               ? "Unlimited"

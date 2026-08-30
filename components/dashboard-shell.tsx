@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Sidebar from "@/components/sidebar";
 import TopBar from "@/components/top-bar";
 
@@ -20,6 +20,38 @@ export default function DashboardShell({
   planLabel,
 }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1023px)");
+    const syncViewport = () => {
+      setIsMobile(query.matches);
+      if (!query.matches) setSidebarOpen(false);
+    };
+
+    syncViewport();
+    query.addEventListener("change", syncViewport);
+    return () => query.removeEventListener("change", syncViewport);
+  }, []);
+
+  const closeSidebar = useCallback(() => {
+    setSidebarOpen(false);
+    if (isMobile) {
+      requestAnimationFrame(() => menuButtonRef.current?.focus());
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!sidebarOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeSidebar();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [closeSidebar, sidebarOpen]);
 
   return (
     // h-dvh, not h-screen: on mobile browsers the URL bar eats into 100vh, which
@@ -27,16 +59,23 @@ export default function DashboardShell({
     <div className="flex h-dvh overflow-hidden bg-background">
       <Sidebar
         isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+        onClose={closeSidebar}
         workspaceName={workspaceName}
         planLabel={planLabel}
+        isMobile={isMobile}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <div
+        className="flex min-w-0 flex-1 flex-col overflow-hidden"
+        aria-hidden={isMobile && sidebarOpen ? true : undefined}
+        inert={isMobile && sidebarOpen ? true : undefined}
+      >
         <TopBar
           onMenuClick={() => setSidebarOpen(true)}
           instagramUsername={instagramUsername}
           instagramAccountCount={instagramAccountCount}
+          menuButtonRef={menuButtonRef}
+          navigationOpen={sidebarOpen}
         />
 
         {/* overflow-x-hidden: enabling vertical scrolling makes the browser
