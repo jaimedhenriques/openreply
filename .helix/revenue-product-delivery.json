@@ -27,9 +27,9 @@
   "executionEvidence": ".helix/evidence/execution.json",
   "copySafety": {
     "publicPatternSources": [
-      "https://manychat.com/product/instagram",
-      "https://help.manychat.com/hc/en-us/articles/14281316989724-Instagram-Post-and-Reel-Comments-trigger",
-      "https://help.manychat.com/hc/en-us/articles/25800323349020-Active-Contacts"
+      "Public competitor Instagram comment-to-DM product pages",
+      "Public competitor help docs on post and reel comment triggers",
+      "Public competitor help docs on contact-based billing"
     ],
     "proprietaryAssetsExcluded": true
   },

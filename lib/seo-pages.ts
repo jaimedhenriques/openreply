@@ -7,63 +7,6 @@ const templateLinks = [
   { label: "Browse every template", href: "/templates" },
 ];
 
-export const manychatAlternativePage: SeoPageConfig = {
-  eyebrow: "Manychat alternative",
-  title: "A focused Manychat alternative for Instagram comment-to-DM campaigns",
-  description:
-    "OpenReply is for teams that do not need a broad chatbot builder. It turns keyword comments into Meta-compliant private replies, tracked links, campaign analytics, and client reports.",
-  primaryCta: "Try the focused alternative",
-  bullets: [
-    "Built around Instagram comments, posts, reels, and private replies.",
-    "Official Meta API flow with no scraping or password sharing.",
-    "Campaign templates, tracked links, and shareable client reports.",
-    "Hosted Pro service with a public MIT-licensed self-hosting option.",
-  ],
-  sections: [
-    {
-      title: "Narrower by design",
-      body: "Broad automation suites can be powerful, but they also add flow-builder weight. OpenReply keeps the campaign path tight: keyword, post, reply, link, result.",
-    },
-    {
-      title: "Agency proof",
-      body: "Tracked links and shareable reports make it easier to show clients what happened after the comment, not just that a message was sent.",
-    },
-    {
-      title: "Meta-first delivery",
-      body: "Comment events are processed through webhooks, queued, deduped, checked against limits, and sent as private replies using the comment ID.",
-    },
-  ],
-  comparisonTitle: "OpenReply vs broad chatbot builders",
-  comparisons: [
-    {
-      label: "Setup",
-      ours: "Create a keyword campaign for a specific post or reel.",
-      other: "Build and maintain a larger chatbot automation flow.",
-    },
-    {
-      label: "Reporting",
-      ours: "Campaign-level sends, skips, failures, clicks, CTR, and client report links.",
-      other: "Usually broader conversation analytics that need cleanup for client reporting.",
-    },
-    {
-      label: "Positioning",
-      ours: "Instagram Campaign OS for agencies and campaign teams.",
-      other: "General DM automation across many channels and use cases.",
-    },
-  ],
-  templateLinks,
-  faqs: [
-    {
-      title: "Is OpenReply a full Manychat replacement?",
-      body: "OpenReply covers focused Instagram comment-to-DM campaigns. Teams that need a multi-channel visual chatbot builder should choose a broader platform.",
-    },
-    {
-      title: "Does it support agencies?",
-      body: "A Pro workspace supports one client Instagram account, 3 workspace members, analytics, and shareable reports. Keep each client in a separate workspace during the launch release.",
-    },
-  ],
-};
-
 export const templatesSeoPage: SeoPageConfig = {
   eyebrow: "Instagram comment-to-DM templates",
   title: "Instagram comment-to-DM templates for high-intent campaign replies",
