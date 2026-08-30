@@ -447,9 +447,7 @@ export default async function Home() {
               ))}
             </div>
             <p className="mt-6 text-xs leading-5 text-muted">
-              Card details are requested only when you choose Pro. The public
-              repository remains available under the MIT license for teams that
-              prefer to self-host.
+              Card details are requested only when you choose Pro.
             </p>
           </div>
         </div>
