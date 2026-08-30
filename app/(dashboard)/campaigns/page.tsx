@@ -8,7 +8,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
 import { readCache, writeCache } from "@/lib/client-cache";
 
@@ -63,7 +62,6 @@ interface Campaign {
 }
 
 export default function CampaignsPage() {
-  const router = useRouter();
   const [automations, setAutomations] = useState<Campaign[]>([]);
   const [accounts, setAccounts] = useState<AccountOption[]>([]);
   const [selectedAccountId, setSelectedAccountId] = useState("all");
@@ -80,6 +78,7 @@ export default function CampaignsPage() {
   } | null>(null);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "paused">(
     "all"
@@ -198,17 +197,27 @@ export default function CampaignsPage() {
   }
 
   async function toggleActive(id: string, isActive: boolean) {
+    setActionError(null);
     try {
-      await fetch(`/api/automations?id=${id}`, {
+      const response = await fetch(`/api/automations?id=${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isActive: !isActive }),
       });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success) {
+        throw new Error(payload?.error ?? "The campaign could not be updated.");
+      }
       setAutomations((prev) =>
         prev.map((a) => (a.id === id ? { ...a, isActive: !isActive } : a))
       );
     } catch (err) {
       console.error("Failed to toggle:", err);
+      setActionError(
+        err instanceof Error
+          ? err.message
+          : "The campaign could not be updated. Try again."
+      );
     }
   }
 
@@ -229,11 +238,23 @@ export default function CampaignsPage() {
 
   async function deleteAutomation(id: string) {
     if (!confirm("Delete this campaign? This cannot be undone.")) return;
+    setActionError(null);
     try {
-      await fetch(`/api/automations?id=${id}`, { method: "DELETE" });
+      const response = await fetch(`/api/automations?id=${id}`, {
+        method: "DELETE",
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success) {
+        throw new Error(payload?.error ?? "The campaign could not be deleted.");
+      }
       setAutomations((prev) => prev.filter((a) => a.id !== id));
     } catch (err) {
       console.error("Failed to delete:", err);
+      setActionError(
+        err instanceof Error
+          ? err.message
+          : "The campaign could not be deleted. Try again."
+      );
     }
   }
 
@@ -328,12 +349,21 @@ export default function CampaignsPage() {
           </Link>
           <Link
             href="/campaigns/new"
-            className="flex-1 rounded bg-accent px-4 py-2 text-center text-sm font-medium text-white hover:bg-accent-hover sm:flex-none"
+            className="pressable min-h-11 flex-1 rounded-lg bg-accent px-4 py-2 text-center text-sm font-medium text-accent-foreground hover:bg-accent-hover sm:flex-none"
           >
             New Campaign
           </Link>
         </div>
       </div>
+
+      {actionError && (
+        <div
+          role="alert"
+          className="rounded-lg border border-error/30 bg-error/5 px-4 py-3 text-sm text-error"
+        >
+          {actionError}
+        </div>
+      )}
 
       {/* Search + status filter */}
       {automations.length > 0 && (
@@ -372,7 +402,7 @@ export default function CampaignsPage() {
           </p>
           <Link
             href="/campaigns/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-sm font-semibold text-white hover:bg-accent-hover transition-colors"
+            className="pressable inline-flex min-h-11 items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground hover:bg-accent-hover"
           >
             Create Campaign
           </Link>
@@ -391,10 +421,9 @@ export default function CampaignsPage() {
         {filtered.map((auto) => {
           const videoUrl = auto.postId ? videos[auto.postId] : undefined;
           return (
-          <div
+          <article
             key={auto.id}
-            onClick={() => router.push(`/campaigns/${auto.id}`)}
-            className="panel rounded p-4 hover:border-border-hover transition-all cursor-pointer"
+            className="panel rounded-lg p-4 transition-colors hover:border-border-hover"
           >
             {/* Wraps rather than compressing: on a phone the action buttons drop
                 to their own line instead of squeezing the campaign summary. */}
@@ -442,7 +471,14 @@ export default function CampaignsPage() {
               )}
               <div className="min-w-[12rem] flex-1">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <h3 className="text-sm font-semibold truncate">{auto.name}</h3>
+                  <h3 className="min-w-0 text-sm font-semibold">
+                    <Link
+                      href={`/campaigns/${auto.id}`}
+                      className="block truncate text-foreground hover:text-accent"
+                    >
+                      {auto.name}
+                    </Link>
+                  </h3>
                   <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-xs text-muted">
                     @{auto.instagramAccount.username}
                   </span>
@@ -528,45 +564,50 @@ export default function CampaignsPage() {
               </div>
 
               {/* Actions */}
-              <div
-                className="ml-auto flex items-center gap-2"
-                onClick={(e) => e.stopPropagation()}
-              >
+              <div className="ml-auto flex items-center gap-1">
                 {/* Copy reel URL */}
                 {auto.postUrl && (
                   <button
                     onClick={() => void copyReelUrl(auto)}
-                    className="shrink-0 rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted transition-colors hover:border-border-hover hover:text-foreground"
+                    className="pressable min-h-11 shrink-0 rounded-full border border-border px-3 text-xs font-medium text-muted transition-colors hover:border-border-hover hover:text-foreground"
                   >
                     {copiedId === auto.id ? "Copied!" : "Copy URL"}
                   </button>
                 )}
                 {/* Toggle */}
                 <button
+                  type="button"
                   onClick={() => toggleActive(auto.id, auto.isActive)}
-                  className={`
-                    relative w-11 h-6 rounded-full transition-colors
-                    ${auto.isActive ? "bg-accent" : "bg-zinc-300"}
-                  `}
+                  aria-label={`${auto.isActive ? "Pause" : "Activate"} ${auto.name}`}
+                  aria-pressed={auto.isActive}
+                  className="relative size-11 shrink-0"
                 >
                   <span
+                    aria-hidden="true"
                     className={`
-                      absolute top-1 w-4 h-4 rounded-full bg-white transition-transform shadow-sm
-                      ${auto.isActive ? "left-6" : "left-1"}
+                      absolute left-0 top-1/2 h-6 w-11 -translate-y-1/2 rounded-full transition-colors
+                      ${auto.isActive ? "bg-accent" : "bg-zinc-300"}
                     `}
-                  />
+                  >
+                    <span
+                      className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform shadow-sm ${
+                        auto.isActive ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </span>
                 </button>
 
                 {/* Kebab menu */}
                 <div className="relative">
                   <button
+                    type="button"
                     onClick={() =>
                       setMenuOpenId((cur) => (cur === auto.id ? null : auto.id))
                     }
                     aria-label="More actions"
-                    className="px-2 py-1 rounded text-lg leading-none text-muted hover:text-foreground"
+                    className="pressable inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-medium text-muted hover:bg-surface-hover hover:text-foreground"
                   >
-                    ⋯
+                    More
                   </button>
                   {menuOpenId === auto.id && (
                     <>
@@ -596,7 +637,7 @@ export default function CampaignsPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </article>
           );
         })}
       </div>
@@ -617,7 +658,7 @@ export default function CampaignsPage() {
                   href={playingVideo.postUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-zinc-300 hover:text-white"
+                  className="inline-flex min-h-11 items-center text-zinc-300 hover:text-white"
                 >
                   Open on Instagram
                 </a>
@@ -625,7 +666,7 @@ export default function CampaignsPage() {
               <button
                 type="button"
                 onClick={() => setPlayingVideo(null)}
-                className="text-zinc-300 hover:text-white"
+                className="inline-flex min-h-11 items-center text-zinc-300 hover:text-white"
               >
                 Close
               </button>

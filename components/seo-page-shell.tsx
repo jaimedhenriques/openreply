@@ -32,100 +32,125 @@ export default function SeoPageShell({ config }: { config: SeoPageConfig }) {
     <main className="min-h-screen bg-background text-foreground">
       <PublicSiteHeader />
 
-      <section className="border-b border-white/10 bg-zinc-950/70">
-        <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-20 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+      <section className="border-b border-border bg-surface">
+        <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-8 lg:py-24">
           <div>
-            <p className="text-sm font-bold uppercase text-cyan-200">
+            <p className="inline-flex rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-sm font-semibold text-accent">
               {config.eyebrow}
             </p>
-            <h1 className="mt-4 text-5xl font-black leading-tight text-white sm:text-6xl">
+            <h1 className="mt-5 max-w-4xl text-balance text-4xl font-semibold leading-[1.04] tracking-[-0.035em] text-foreground sm:text-6xl">
               {config.title}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-400">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">
               {config.description}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center bg-cyan-300 px-6 py-3 text-sm font-bold text-zinc-950 transition hover:bg-cyan-200"
+                className="pressable inline-flex min-h-12 items-center justify-center rounded-lg bg-accent px-6 text-sm font-bold text-white hover:bg-accent-hover"
               >
                 {config.primaryCta}
               </Link>
               <Link
                 href="/templates"
-                className="inline-flex items-center justify-center border border-white/10 bg-white/[0.04] px-6 py-3 text-sm font-bold text-white transition hover:border-white/20 hover:bg-white/[0.08]"
+                className="pressable inline-flex min-h-12 items-center justify-center rounded-lg border border-border bg-background px-6 text-sm font-bold text-foreground hover:border-border-hover hover:bg-surface-hover"
               >
                 {config.secondaryCta ?? "Browse templates"}
               </Link>
             </div>
           </div>
 
-          <div className="border border-white/10 bg-white/[0.035] p-6">
-            <p className="text-xs font-bold uppercase tracking-wide text-zinc-500">
-              Campaign OS checklist
-            </p>
-            <ul className="mt-5 space-y-4">
+          <aside className="rounded-2xl border border-border bg-background p-6 sm:p-7">
+            <h2 className="text-base font-bold text-foreground">
+              Your campaign checklist
+            </h2>
+            <ul className="mt-5 grid">
               {config.bullets.map((bullet) => (
-                <li key={bullet} className="flex gap-3 text-sm leading-6 text-zinc-300">
+                <li key={bullet} className="border-t border-border py-4 text-sm leading-6 text-muted last:border-b">
                   {bullet}
                 </li>
               ))}
             </ul>
-          </div>
+          </aside>
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-6 lg:px-8">
+      <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-4 md:grid-cols-3">
           {config.sections.map((section) => (
-            <article key={section.title} className="border border-white/10 bg-white/[0.035] p-6">
-              <h2 className="text-2xl font-black text-white">{section.title}</h2>
-              <p className="mt-4 text-sm leading-7 text-zinc-400">{section.body}</p>
+            <article
+              key={section.title}
+              className="rounded-2xl border border-border bg-background p-6"
+            >
+              <h2 className="text-xl font-bold tracking-[-0.02em] text-foreground">
+                {section.title}
+              </h2>
+              <p className="mt-3 text-sm leading-7 text-muted">{section.body}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-white/[0.025] py-16">
+      <section className="border-y border-border bg-surface py-16 lg:py-20">
         <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-black text-white">{config.comparisonTitle}</h2>
-          <div className="mt-8 overflow-hidden border border-white/10">
-            <div className="grid grid-cols-[0.8fr_1fr_1fr] border-b border-white/10 bg-zinc-950 text-xs font-bold uppercase tracking-wide text-zinc-500">
-              <div className="p-4">Need</div>
-              <div className="p-4 text-cyan-100">OpenReply</div>
-              <div className="p-4">Generic automation</div>
-            </div>
-            {config.comparisons.map((item) => (
-              <div
-                key={item.label}
-                className="grid grid-cols-1 border-b border-white/10 last:border-0 md:grid-cols-[0.8fr_1fr_1fr]"
-              >
-                <div className="bg-zinc-950/50 p-4 text-sm font-semibold text-white">
-                  {item.label}
-                </div>
-                <div className="p-4 text-sm leading-6 text-zinc-300">
-                  {item.ours}
-                </div>
-                <div className="p-4 text-sm leading-6 text-zinc-500">
-                  {item.other}
-                </div>
-              </div>
-            ))}
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold text-accent">Clear differences</p>
+            <h2 className="mt-3 text-balance text-3xl font-semibold tracking-[-0.035em] text-foreground sm:text-4xl">
+              {config.comparisonTitle}
+            </h2>
+          </div>
+          <div
+            className="mt-8 overflow-x-auto rounded-2xl border border-border bg-background"
+            role="region"
+            aria-label={`${config.comparisonTitle} comparison`}
+            tabIndex={0}
+          >
+            <table className="w-full min-w-[42rem] border-collapse text-left">
+              <caption className="sr-only">
+                A comparison of OpenReply and generic automation by campaign need.
+              </caption>
+              <thead className="bg-surface">
+                <tr className="border-b border-border">
+                  <th scope="col" className="w-[28%] px-5 py-4 text-sm font-semibold text-muted">
+                    Campaign need
+                  </th>
+                  <th scope="col" className="w-[36%] px-5 py-4 text-sm font-bold text-accent">
+                    OpenReply
+                  </th>
+                  <th scope="col" className="w-[36%] px-5 py-4 text-sm font-semibold text-muted">
+                    Generic automation
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {config.comparisons.map((item) => (
+                  <tr key={item.label} className="border-b border-border last:border-0">
+                    <th scope="row" className="px-5 py-5 text-sm font-bold text-foreground">
+                      {item.label}
+                    </th>
+                    <td className="border-l border-border bg-accent/[0.04] px-5 py-5 text-sm leading-6 text-foreground">
+                      {item.ours}
+                    </td>
+                    <td className="border-l border-border px-5 py-5 text-sm leading-6 text-muted">
+                      {item.other}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+      <section className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:px-8 lg:py-20">
         <div>
-          <p className="text-sm font-bold uppercase text-emerald-200">
-            Start from a template
-          </p>
-          <h2 className="mt-3 text-4xl font-black text-white">
-            Launch a campaign faster than building a chatbot flow
+          <p className="text-sm font-semibold text-accent">Ready-made campaigns</p>
+          <h2 className="mt-3 text-balance text-3xl font-semibold tracking-[-0.035em] text-foreground sm:text-4xl">
+            Launch faster with a focused template
           </h2>
-          <p className="mt-5 text-sm leading-7 text-zinc-400">
-            Use a campaign template, connect the right Instagram account, pick
-            the post, and ship a measurable comment-to-DM loop.
+          <p className="mt-5 max-w-xl text-sm leading-7 text-muted">
+            Connect the right Instagram account, pick the post, and turn a proven
+            playbook into a measurable comment-to-DM campaign.
           </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -133,45 +158,45 @@ export default function SeoPageShell({ config }: { config: SeoPageConfig }) {
             <Link
               key={link.href}
               href={link.href}
-              className="border border-white/10 bg-white/[0.035] p-5 text-sm font-semibold text-white transition hover:border-cyan-200/30 hover:bg-cyan-300/10"
+              className="pressable group flex min-h-14 items-center justify-between gap-3 rounded-xl border border-border bg-background px-5 py-4 text-sm font-semibold text-foreground hover:border-accent/40 hover:bg-accent/[0.04]"
             >
-              {link.label}
+              <span>{link.label}</span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-zinc-950/70 py-16">
+      <section className="border-t border-border bg-surface py-16 lg:py-20">
         <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
           <div>
-            <p className="text-sm font-bold uppercase text-cyan-200">FAQ</p>
-            <h2 className="mt-3 text-4xl font-black text-white">
-              Search questions, answered clearly
+            <p className="text-sm font-semibold text-accent">FAQ</p>
+            <h2 className="mt-3 text-balance text-3xl font-semibold tracking-[-0.035em] text-foreground sm:text-4xl">
+              Straight answers before you start
             </h2>
           </div>
           <div className="grid gap-3">
             {config.faqs.map((faq) => (
-              <article key={faq.title} className="border border-white/10 bg-white/[0.035] p-5">
-                <h3 className="text-lg font-bold text-white">{faq.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-zinc-400">{faq.body}</p>
+              <article key={faq.title} className="rounded-xl border border-border bg-background p-5">
+                <h3 className="text-base font-bold text-foreground">{faq.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted">{faq.body}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-6 lg:px-8">
-        <div className="border border-cyan-200/20 bg-cyan-300/10 p-8 text-center">
-          <h2 className="text-4xl font-black text-white">
+      <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div className="inverse-section rounded-2xl px-6 py-12 text-center sm:px-10">
+          <h2 className="mx-auto max-w-3xl text-balance text-3xl font-semibold tracking-[-0.035em] text-inverse-foreground sm:text-4xl">
             Turn the next high-intent comment into a private reply
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-zinc-300">
-            OpenReply is built for Instagram professional accounts, official
-            Meta private replies, and campaign reporting teams can show clients.
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-inverse-muted">
+            OpenReply uses official Meta private replies and campaign reporting
+            your team can act on.
           </p>
           <Link
             href="/login"
-            className="mt-8 inline-flex items-center justify-center bg-cyan-300 px-6 py-3 text-sm font-bold text-zinc-950 transition hover:bg-cyan-200"
+            className="pressable mt-8 inline-flex min-h-12 items-center justify-center rounded-lg bg-accent px-6 text-sm font-bold text-accent-foreground hover:bg-accent-hover"
           >
             Start free
           </Link>
@@ -180,4 +205,3 @@ export default function SeoPageShell({ config }: { config: SeoPageConfig }) {
     </main>
   );
 }
-

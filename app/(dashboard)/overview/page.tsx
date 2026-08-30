@@ -39,27 +39,49 @@ export default function OverviewPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState("all");
   const [count, setCount] = useState("50");
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
+    const controller = new AbortController();
     const params = new URLSearchParams();
     if (selectedAccountId !== "all") {
       params.set("instagramAccountId", selectedAccountId);
     }
     params.set("count", count);
 
-    fetch(`/api/instagram/overview?${params}`)
-      .then((r) => r.json())
-      .then((res) => {
-        if (res.success) {
-          setData(res.data);
-          setError(null);
-        } else {
-          setError(res.error ?? "Failed to load overview");
+    async function loadOverview() {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/instagram/overview?${params}`, {
+          signal: controller.signal,
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+          throw new Error(result.error ?? "Failed to load overview");
         }
-      })
-      .catch(() => setError("Failed to load overview"))
-      .finally(() => setLoading(false));
-  }, [selectedAccountId, count]);
+
+        setData(result.data);
+        setError(null);
+      } catch (fetchError) {
+        if (
+          fetchError instanceof DOMException &&
+          fetchError.name === "AbortError"
+        ) {
+          return;
+        }
+        setError(
+          fetchError instanceof Error
+            ? fetchError.message
+            : "Failed to load overview"
+        );
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+
+    void loadOverview();
+    return () => controller.abort();
+  }, [selectedAccountId, count, retryKey]);
 
   function handleAccountChange(accountId: string) {
     setLoading(true);
@@ -71,31 +93,46 @@ export default function OverviewPage() {
     setCount(next);
   }
 
-  if (loading) {
+  if (loading && !data) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="panel rounded p-4 h-24 sm:p-5">
-            <div className="h-4 w-16 bg-zinc-200 rounded" />
-            <div className="mt-3 h-6 w-20 bg-zinc-200/60 rounded" />
+      <div
+        className="grid gap-3 sm:grid-cols-3 sm:gap-4"
+        aria-label="Loading overview"
+      >
+        {[...Array(3)].map((_, index) => (
+          <div key={index} className="panel h-28 rounded-xl p-5">
+            <div className="h-4 w-20 animate-pulse rounded bg-surface-hover" />
+            <div className="mt-4 h-8 w-24 animate-pulse rounded bg-surface-hover" />
           </div>
         ))}
       </div>
     );
   }
 
-  if (error) {
+  if (error && !data) {
     return (
-      <div className="panel rounded p-8 text-center">
-        <p className="text-sm text-error">{error}</p>
-        {error.includes("connect") && (
-          <a
-            href="/api/instagram/connect"
-            className="mt-4 inline-block text-sm text-accent hover:underline"
+      <div className="panel rounded-xl p-8 text-center" role="alert">
+        <h2 className="text-base font-semibold text-foreground">
+          Overview unavailable
+        </h2>
+        <p className="mt-2 text-sm text-error">{error}</p>
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => setRetryKey((value) => value + 1)}
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-foreground hover:border-border-hover hover:bg-surface-hover"
           >
-            Connect Instagram
-          </a>
-        )}
+            Try again
+          </button>
+          {error.toLowerCase().includes("connect") && (
+            <a
+              href="/api/instagram/connect"
+              className="pressable inline-flex min-h-11 items-center justify-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground hover:bg-accent-hover"
+            >
+              Connect Instagram
+            </a>
+          )}
+        </div>
       </div>
     );
   }
@@ -104,13 +141,34 @@ export default function OverviewPage() {
 
   const { totals, posts, accounts, insightsAvailable, followers, followerHistory } =
     data;
+  const secondaryMetrics: Array<[string, number | null]> = [
+    ["Likes", totals.likes],
+    ["Comments", totals.comments],
+    ["Saved", totals.saved],
+    ["Shares", totals.shares],
+  ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" aria-busy={loading}>
+      {error && (
+        <div
+          className="flex flex-col gap-3 rounded-xl border border-error/20 bg-error/5 p-4 sm:flex-row sm:items-center sm:justify-between"
+          role="alert"
+        >
+          <p className="text-sm text-error">{error}</p>
+          <button
+            type="button"
+            onClick={() => setRetryKey((value) => value + 1)}
+            className="min-h-11 self-start rounded-lg border border-error/30 px-3 text-sm font-semibold text-error hover:bg-error/5 sm:self-auto"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-lg font-semibold text-foreground">Overview</h1>
-          <p className="text-sm text-muted mt-1">
+          <p className="text-sm text-muted">
             {data.requestedCount === "all" ? "All-time" : "Recent"} —{" "}
             {totals.posts} post{totals.posts === 1 ? "" : "s"} from @
             {data.account.username}
@@ -155,40 +213,71 @@ export default function OverviewPage() {
         </div>
       </div>
 
+      {loading && (
+        <p className="text-sm text-muted" role="status" aria-live="polite">
+          Updating overview…
+        </p>
+      )}
+
       {!insightsAvailable && (
-        <div className="panel rounded p-4 border border-border">
+        <div className="panel rounded-xl border border-border p-4">
           <p className="text-sm text-foreground">
             Views, reach, saved and shares need the insights permission.
           </p>
-          <p className="text-sm text-muted mt-1">
+          <p className="mt-1 text-sm text-muted">
             Reconnect your account to grant it — likes and comments are shown in
             the meantime.
           </p>
           <a
             href="/api/instagram/connect"
-            className="mt-3 inline-block text-sm text-accent hover:underline"
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-accent hover:underline"
           >
             Reconnect Instagram
           </a>
         </div>
       )}
 
-      {/* Aggregate totals */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-        <StatCard label="Views" value={formatNumber(totals.views)} />
-        <StatCard label="Reach" value={formatNumber(totals.reach)} />
-        <StatCard label="Likes" value={formatNumber(totals.likes)} />
-        <StatCard label="Comments" value={formatNumber(totals.comments)} />
-        <StatCard label="Saved" value={formatNumber(totals.saved)} />
-        <StatCard label="Shares" value={formatNumber(totals.shares)} />
+      {/* Primary outcomes */}
+      <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
+        <StatCard
+          label="Views"
+          value={formatNumber(totals.views)}
+          description="Across selected posts"
+        />
+        <StatCard
+          label="Reach"
+          value={formatNumber(totals.reach)}
+          description="Across selected posts"
+        />
+        <StatCard
+          label="Interactions"
+          value={formatNumber(totals.interactions)}
+          description="Likes, comments, saves and shares"
+        />
       </div>
+
+      <dl className="panel grid rounded-xl sm:grid-cols-4">
+        {secondaryMetrics.map(([label, value], index) => (
+          <div
+            key={label}
+            className={`flex items-center justify-between gap-4 px-4 py-3 sm:block sm:px-5 sm:py-4 ${
+              index < 3 ? "border-b border-border sm:border-r sm:border-b-0" : ""
+            }`}
+          >
+            <dt className="text-sm text-muted">{label}</dt>
+            <dd className="text-sm font-semibold tabular-nums text-foreground sm:mt-1 sm:text-lg">
+              {formatNumber(value)}
+            </dd>
+          </div>
+        ))}
+      </dl>
 
       {/* Follower trend — account-level, independent of the post range */}
       <FollowerChart data={followerHistory} followers={followers} />
 
       {/* Per-post table */}
-      <div className="panel rounded p-4 sm:p-6">
-        <h2 className="text-sm font-semibold text-foreground mb-4">Posts</h2>
+      <div className="panel rounded-xl p-4 sm:p-6">
+        <h2 className="mb-4 text-sm font-semibold text-foreground">Posts</h2>
         {posts.length === 0 ? (
           <p className="text-sm text-muted py-8 text-center">No posts found</p>
         ) : (
@@ -230,25 +319,25 @@ export default function OverviewPage() {
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-3 text-right text-muted">
+                    <td className="py-3 px-3 text-right tabular-nums text-muted">
                       {formatNumber(p.views)}
                     </td>
-                    <td className="py-3 px-3 text-right text-muted">
+                    <td className="py-3 px-3 text-right tabular-nums text-muted">
                       {formatNumber(p.reach)}
                     </td>
-                    <td className="py-3 px-3 text-right text-muted">
+                    <td className="py-3 px-3 text-right tabular-nums text-muted">
                       {formatNumber(p.likes)}
                     </td>
-                    <td className="py-3 px-3 text-right text-muted">
+                    <td className="py-3 px-3 text-right tabular-nums text-muted">
                       {formatNumber(p.comments)}
                     </td>
-                    <td className="py-3 px-3 text-right text-muted">
+                    <td className="py-3 px-3 text-right tabular-nums text-muted">
                       {formatNumber(p.saved)}
                     </td>
-                    <td className="py-3 px-3 text-right text-muted">
+                    <td className="py-3 px-3 text-right tabular-nums text-muted">
                       {formatNumber(p.shares)}
                     </td>
-                    <td className="py-3 pl-3 text-right text-zinc-500">
+                    <td className="py-3 pl-3 text-right tabular-nums text-zinc-500">
                       {formatDate(p.timestamp)}
                     </td>
                   </tr>

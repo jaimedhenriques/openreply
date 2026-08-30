@@ -58,34 +58,34 @@ export default async function TemplateDetailPage({ params }: TemplatePageProps) 
     <main className="min-h-screen bg-background text-foreground">
       <PublicSiteHeader active="templates" />
 
-      <section className="border-b border-white/10 bg-zinc-950/55">
-        <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-14 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-20">
+      <section className="border-b border-border bg-surface">
+        <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-14 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-8 lg:py-20">
           <div>
             <Link
               href="/templates"
-              className="text-sm font-semibold text-zinc-400 transition hover:text-white"
+              className="pressable inline-flex min-h-11 items-center rounded-lg pr-3 text-sm font-semibold text-muted hover:text-foreground"
             >
-              Back to templates
+              All templates
             </Link>
-            <p className="mt-8 text-sm font-bold uppercase tracking-wide text-cyan-200">
-              {template.category} template
+            <p className="mt-6 text-sm font-semibold text-accent">
+              {template.category}
             </p>
-            <h1 className="mt-4 text-5xl font-black leading-[1.02] text-white sm:text-6xl">
+            <h1 className="mt-3 text-balance text-4xl font-semibold leading-[1.04] tracking-[-0.035em] text-foreground sm:text-6xl">
               {template.title}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-300">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">
               {template.summary}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={`/login?template=${template.slug}`}
-                className="inline-flex items-center justify-center bg-cyan-300 px-6 py-3 text-sm font-bold text-zinc-950 transition hover:bg-cyan-200"
+                className="pressable inline-flex min-h-12 items-center justify-center rounded-lg bg-accent px-6 text-sm font-bold text-accent-foreground hover:bg-accent-hover"
               >
                 Use this template
               </Link>
               <a
                 href="#playbook"
-                className="inline-flex items-center justify-center border border-white/10 bg-white/[0.04] px-6 py-3 text-sm font-bold text-white transition hover:border-white/20 hover:bg-white/[0.08]"
+                className="pressable inline-flex min-h-12 items-center justify-center rounded-lg border border-border bg-background px-6 text-sm font-bold text-foreground hover:border-border-hover hover:bg-surface-hover"
               >
                 Read playbook
               </a>
@@ -96,68 +96,60 @@ export default async function TemplateDetailPage({ params }: TemplatePageProps) 
         </div>
       </section>
 
-      <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-16 sm:px-6 lg:grid-cols-[0.78fr_1.22fr] lg:px-8">
-        <aside className="space-y-4">
-          <div className="border border-white/10 bg-white/[0.035] p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              Audience
-            </p>
-            <p className="mt-2 text-lg font-bold text-white">{template.audience}</p>
-          </div>
-          <div className="border border-white/10 bg-white/[0.035] p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              Setup time
-            </p>
-            <p className="mt-2 text-lg font-bold text-white">
-              {template.setupMinutes} minutes
-            </p>
-          </div>
-          <div className="border border-white/10 bg-white/[0.035] p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              Campaign goal
-            </p>
-            <p className="mt-2 text-lg font-bold text-white">{template.goal}</p>
-          </div>
+      <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-16 sm:px-6 lg:grid-cols-[0.78fr_1.22fr] lg:px-8 lg:py-20">
+        <aside className="grid content-start gap-3 sm:grid-cols-3 lg:grid-cols-1" aria-label="Template details">
+          {[
+            ["Audience", template.audience],
+            ["Setup time", `${template.setupMinutes} minutes`],
+            ["Campaign goal", template.goal],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-xl border border-border bg-surface p-5">
+              <p className="text-sm font-semibold text-muted">{label}</p>
+              <p className="mt-2 text-lg font-bold text-foreground">{value}</p>
+            </div>
+          ))}
         </aside>
 
-        <div id="playbook" className="space-y-8">
-          <section className="border border-white/10 bg-white/[0.035] p-6">
-            <h2 className="text-2xl font-black text-white">Campaign Outcome</h2>
-            <p className="mt-3 text-base leading-8 text-zinc-300">
-              {template.outcome}
-            </p>
+        <div id="playbook" className="scroll-mt-24 space-y-6">
+          <section className="rounded-2xl border border-border bg-background p-6">
+            <h2 className="text-2xl font-bold tracking-[-0.02em] text-foreground">
+              Campaign outcome
+            </h2>
+            <p className="mt-3 text-base leading-8 text-muted">{template.outcome}</p>
           </section>
 
-          <section className="border border-white/10 bg-white/[0.035] p-6">
-            <h2 className="text-2xl font-black text-white">Setup Playbook</h2>
-            <ol className="mt-5 space-y-3">
+          <section className="rounded-2xl border border-border bg-background p-6">
+            <h2 className="text-2xl font-bold tracking-[-0.02em] text-foreground">
+              Setup playbook
+            </h2>
+            <ol className="mt-6 space-y-4">
               {template.playbook.map((step, index) => (
-                <li key={step} className="grid gap-3 sm:grid-cols-[40px_1fr]">
-                  <span className="flex h-8 w-8 items-center justify-center bg-cyan-300 text-sm font-black text-zinc-950">
+                <li key={step} className="grid gap-3 sm:grid-cols-[44px_1fr] sm:items-start">
+                  <span className="grid h-10 w-10 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-foreground">
                     {index + 1}
                   </span>
-                  <span className="text-sm leading-7 text-zinc-300">{step}</span>
+                  <span className="pt-1.5 text-sm leading-7 text-muted">{step}</span>
                 </li>
               ))}
             </ol>
           </section>
 
           <section className="grid gap-4 md:grid-cols-2">
-            <div className="border border-white/10 bg-white/[0.035] p-6">
-              <h2 className="text-xl font-black text-white">Best For</h2>
-              <ul className="mt-4 space-y-2">
+            <div className="rounded-2xl border border-border bg-background p-6">
+              <h2 className="text-xl font-bold text-foreground">Best for</h2>
+              <ul className="mt-4">
                 {template.bestFor.map((item) => (
-                  <li key={item} className="text-sm text-zinc-300">
+                  <li key={item} className="border-t border-border py-3 text-sm text-muted last:border-b">
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="border border-white/10 bg-white/[0.035] p-6">
-              <h2 className="text-xl font-black text-white">Metrics To Watch</h2>
-              <ul className="mt-4 space-y-2">
+            <div className="rounded-2xl border border-border bg-background p-6">
+              <h2 className="text-xl font-bold text-foreground">Metrics to watch</h2>
+              <ul className="mt-4">
                 {template.metrics.map((item) => (
-                  <li key={item} className="text-sm text-zinc-300">
+                  <li key={item} className="border-t border-border py-3 text-sm text-muted last:border-b">
                     {item}
                   </li>
                 ))}
@@ -165,20 +157,20 @@ export default async function TemplateDetailPage({ params }: TemplatePageProps) 
             </div>
           </section>
 
-          <section className="border border-cyan-200/20 bg-cyan-300/10 p-6">
+          <section className="rounded-2xl border border-accent/20 bg-accent/[0.06] p-6">
             <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
-                <h2 className="text-2xl font-black text-white">
+                <h2 className="text-2xl font-bold tracking-[-0.02em] text-foreground">
                   Copy this campaign into OpenReply
                 </h2>
-                <p className="mt-2 text-sm leading-6 text-zinc-300">
-                  Sign in, connect Instagram, pick a post or reel, and the
-                  template copy will be ready for your campaign draft.
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  Sign in, connect Instagram, pick a post or reel, and start with
+                  the campaign copy already prepared.
                 </p>
               </div>
               <Link
                 href={`/login?template=${template.slug}`}
-                className="inline-flex items-center justify-center bg-cyan-300 px-6 py-3 text-sm font-bold text-zinc-950 transition hover:bg-cyan-200"
+                className="pressable inline-flex min-h-12 items-center justify-center rounded-lg bg-accent px-6 text-sm font-bold text-accent-foreground hover:bg-accent-hover"
               >
                 Use this template
               </Link>
@@ -187,25 +179,22 @@ export default async function TemplateDetailPage({ params }: TemplatePageProps) 
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-zinc-950/60 py-14">
+      <section className="border-t border-border bg-surface py-14">
         <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-black text-white">More templates</h2>
+          <h2 className="text-2xl font-bold tracking-[-0.02em] text-foreground">
+            More templates
+          </h2>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {relatedTemplates.map((item) => (
               <Link
                 key={item.slug}
                 href={`/templates/${item.slug}`}
-                className="border border-white/10 bg-white/[0.035] p-5 transition hover:border-white/20 hover:bg-white/[0.055]"
+                className="pressable group rounded-xl border border-border bg-background p-5 hover:border-accent/40"
               >
-                <p className="text-xs font-semibold uppercase tracking-wide text-cyan-200">
-                  {item.category}
-                </p>
-                <h3 className="mt-3 text-lg font-black text-white">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  {item.summary}
-                </p>
+                <p className="text-sm font-semibold text-accent">{item.category}</p>
+                <h3 className="mt-2 text-lg font-bold text-foreground">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted">{item.summary}</p>
+                <span className="mt-4 inline-flex items-center text-sm font-semibold text-foreground">View playbook</span>
               </Link>
             ))}
           </div>
