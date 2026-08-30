@@ -35,6 +35,7 @@ jobs:
       - name: Prepare deterministic CI encryption key
         run: printf 'ENCRYPTION_KEY=%064d\n' 0 >> "$GITHUB_ENV"
       - run: npm ci
+      - run: npm run db:generate
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
