@@ -17,7 +17,7 @@ export const manychatAlternativePage: SeoPageConfig = {
     "Built around Instagram comments, posts, reels, and private replies.",
     "Official Meta API flow with no scraping or password sharing.",
     "Campaign templates, tracked links, and shareable client reports.",
-    "Open-source core with hosted SaaS for agencies that want managed reliability.",
+    "Hosted Pro service with a public MIT-licensed self-hosting option.",
   ],
   sections: [
     {
@@ -55,11 +55,11 @@ export const manychatAlternativePage: SeoPageConfig = {
   faqs: [
     {
       title: "Is OpenReply a full Manychat replacement?",
-      body: "No. OpenReply is intentionally focused on Instagram comment-to-DM campaigns. If you need a complete chatbot suite, use a broad platform. If you need fast campaign loops, OpenReply is built for that.",
+      body: "OpenReply covers focused Instagram comment-to-DM campaigns. Teams that need a multi-channel visual chatbot builder should choose a broader platform.",
     },
     {
       title: "Does it support agencies?",
-      body: "Yes. It supports multiple Instagram accounts, workspace members, account filters, analytics, and shareable reports, with no account limit.",
+      body: "A Pro workspace supports one client Instagram account, 3 workspace members, analytics, and shareable reports. Keep each client in a separate workspace during the launch release.",
     },
   ],
 };
@@ -123,20 +123,20 @@ export const templatesSeoPage: SeoPageConfig = {
 
 export const agenciesSeoPage: SeoPageConfig = {
   eyebrow: "Instagram DM automation for agencies",
-  title: "Instagram DM automation for agencies managing client campaigns",
+  title: "Instagram DM automation for small client campaign teams",
   description:
-    "OpenReply gives agencies multi-account workspaces, client-ready reports, tracked links, and a focused comment-to-DM workflow for repeatable Instagram campaigns.",
-  primaryCta: "Start an agency workspace",
+    "OpenReply gives small teams a client-ready workspace, tracked links, reports, and a focused comment-to-DM workflow for repeatable Instagram campaigns.",
+  primaryCta: "Start a client workspace",
   bullets: [
-    "Connect multiple client Instagram accounts on the Agency plan.",
+    "Use one Pro workspace for one client Instagram account.",
+    "Invite up to 3 owners, admins, or members.",
     "Filter dashboards, logs, campaigns, and settings by account.",
-    "Invite teammates as owners, admins, or members.",
     "Share read-only client reports without exposing workspace controls.",
   ],
   sections: [
     {
       title: "Client separation",
-      body: "Account filters keep campaign creation, logs, and reporting cleaner when one workspace manages multiple brands.",
+      body: "A separate workspace for each client keeps campaign creation, logs, access, and reporting isolated during the launch release.",
     },
     {
       title: "Repeatable offers",
@@ -156,20 +156,20 @@ export const agenciesSeoPage: SeoPageConfig = {
     },
     {
       label: "Team roles",
-      ours: "Owner, admin, and member roles with invite links.",
+      ours: "Owner, admin, and member roles for up to 3 people.",
       other: "Often one shared login or overpowered teammate access.",
     },
     {
       label: "Account operations",
-      ours: "Per-account filters for campaigns, logs, dashboard stats, and settings.",
+      ours: "One Instagram professional account per Pro workspace.",
       other: "Client work can get mixed across broad automation workspaces.",
     },
   ],
   templateLinks,
   faqs: [
     {
-      title: "How many Instagram accounts can agencies connect?",
-      body: "The Agency plan is shaped for up to 10 connected Instagram professional accounts in the current launch packaging.",
+      title: "How many Instagram accounts can a workspace connect?",
+      body: "The launch Pro plan supports one Instagram professional account per workspace. Multi-client agencies should create one workspace per client.",
     },
     {
       title: "Can clients see reports without logging in?",
@@ -234,4 +234,3 @@ export const commentLinkSeoPage: SeoPageConfig = {
     },
   ],
 };
-

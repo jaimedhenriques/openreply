@@ -14,6 +14,7 @@ For the step-by-step setup, see [setup.md](setup.md).
 | Queue | BullMQ 5 on Redis, via `ioredis` |
 | Auth | Auth.js / NextAuth 5 (email magic links) |
 | Email | Resend (login links) |
+| Billing | Stripe Checkout, Billing Portal, and signed webhooks |
 | Validation | Zod 4 |
 | Charts | Recharts 3 |
 | Styling | Tailwind CSS 4 |
@@ -59,4 +60,5 @@ in the repo. Full descriptions are in [setup.md](setup.md#environment-variables)
 `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `CRON_SECRET`, `ENCRYPTION_KEY`, `DATABASE_URL`,
 `REDIS_URL`, `RESEND_API_KEY`, `EMAIL_FROM`, `META_GRAPH_API_VERSION`,
 `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET`, `FACEBOOK_APP_SECRET`,
-`WEBHOOK_VERIFY_TOKEN`.
+`WEBHOOK_VERIFY_TOKEN`, `OPENREPLY_SELF_HOSTED`, `STRIPE_SECRET_KEY`,
+`STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_ANNUAL`.

@@ -1,6 +1,6 @@
 import { EMAIL_PROVIDER_ID, signIn } from "@/lib/auth";
 import { getCampaignTemplate } from "@/lib/templates/campaign-templates";
-import { DemoNotice } from "@/components/demo-notice";
+import Link from "next/link";
 
 export const metadata = {
   title: "Login - OpenReply",
@@ -42,11 +42,9 @@ export default async function LoginPage({
           <p className="text-muted text-sm leading-relaxed mt-2">
             {selectedTemplate
               ? `Sign in to use the ${selectedTemplate.title} template.`
-              : "Sign in by email, then connect your Instagram professional account."}
+              : "Start a 14-day trial with 100 DMs. No card is required."}
           </p>
         </div>
-
-        <DemoNotice variant="panel" />
 
         <div className="panel rounded p-8 shadow-black/40">
           {selectedTemplate && !checkEmail && (
@@ -97,6 +95,10 @@ export default async function LoginPage({
             </form>
           )}
         </div>
+        <p className="mt-5 text-center text-xs leading-5 text-muted">
+          By continuing you agree to the <Link href="/terms" className="underline">terms</Link>{" "}
+          and <Link href="/privacy" className="underline">privacy policy</Link>.
+        </p>
       </div>
     </div>
   );

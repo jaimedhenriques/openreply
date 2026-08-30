@@ -19,7 +19,7 @@ The web app and the worker must share the same `DATABASE_URL`, the same `REDIS_U
 
 - A Facebook account. Meta developer registration is built on it. There is no Instagram-only path.
 - An Instagram Business or Creator account. A personal account cannot be connected. Switch it in the Instagram app under Settings, Account type, if needed.
-- A [Resend](https://resend.com) account for login emails, with a verified sender domain. Login is email magic links only, so without this nobody can sign in. If you already run your own mail server, you can point `EMAIL_SERVER` at it instead and skip Resend entirely — see the [environment variables](#environment-variables) table.
+- A [Resend](https://resend.com) account for login emails, with a verified sender domain. Login is email magic links only, so without this nobody can sign in.
 - Somewhere to host. The recommended setup, used throughout this guide, is Vercel for the web app and Railway for the worker plus Postgres and Redis. Both have free tiers that are enough to run this for a single account.
 
 ## Hosting and your domain
@@ -95,7 +95,11 @@ Copy `.env.example` to `.env` for local work, or set these in Vercel and Railway
 | `RESEND_API_KEY` | Resend key. Login is email magic links only, so without this nobody can sign in. |
 | `EMAIL_FROM` | A sender on a domain you verified in Resend. The placeholder will not deliver. |
 | `ALLOWED_EMAILS` | Optional. Comma-separated allowlist of addresses that may sign in, case insensitive. Unset, anyone who reaches your public URL can request a magic link and gets their own workspace, which is worth closing on an instance you run for yourself. |
-| `EMAIL_SERVER` | Optional. An SMTP URL, for example `smtps://login%40example.com:password@mail.example.com:465`. Set it to send magic links through your own mail server instead of Resend; then `RESEND_API_KEY` is not needed. URL-encode special characters in the user and password (`@` becomes `%40`). Port 465 with `smtps://` is implicit TLS, port 587 with `smtp://` is STARTTLS. |
+| `OPENREPLY_SELF_HOSTED` | Set `true` on an instance you operate for yourself. This disables hosted trial and plan limits. Leave `false` for OpenReply Cloud. |
+| `STRIPE_SECRET_KEY` | Hosted service only. Stripe secret key used to create checkout and portal sessions. |
+| `STRIPE_WEBHOOK_SECRET` | Hosted service only. Signing secret for `/api/stripe/webhook`. |
+| `STRIPE_PRICE_PRO_MONTHLY` | Hosted service only. Price ID for the £19 monthly plan. |
+| `STRIPE_PRICE_PRO_ANNUAL` | Hosted service only. Price ID for the £190 yearly plan. |
 | `META_GRAPH_API_VERSION` | Graph API version, for example `v25.0`. |
 | `INSTAGRAM_APP_ID` | From the Meta app, see Step 6. |
 | `INSTAGRAM_APP_SECRET` | From the Meta app. |
@@ -103,6 +107,10 @@ Copy `.env.example` to `.env` for local work, or set these in Vercel and Railway
 | `WEBHOOK_VERIFY_TOKEN` | Any random string. You paste the same value into Meta's webhook config. |
 
 `ENCRYPTION_KEY` must be exactly 64 hex characters or the app throws on boot.
+
+Self-hosted deployments should set `OPENREPLY_SELF_HOSTED=true` and may leave
+the Stripe variables unset. OpenReply Cloud leaves it `false` and requires all
+4 Stripe variables before billing can work.
 
 Optional, for tuning the polling reconciler (defaults are fine to start):
 

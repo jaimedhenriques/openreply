@@ -1,30 +1,28 @@
 <div align="center">
 
-# OpenReply
+# OpenReply Cloud
 
-Open-sourced ManyChat for Instagram comment-to-DM automation.
+Hosted Instagram comment-to-DM automation with predictable pricing.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/diwenne/openreply?style=flat&color=black)](https://github.com/diwenne/openreply/stargazers)
+[![Stars](https://img.shields.io/github/stars/jaimedhenriques/openreply?style=flat&color=black)](https://github.com/jaimedhenriques/openreply/stargazers)
 [![Built with Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org)
 
 </div>
 
-Someone comments `LINK` on your reel, and they get a DM with your link a second later. That is the whole idea. OpenReply watches the comments on your Instagram posts, and when a comment matches a keyword you set, it sends that person a private reply through the official Meta API. You can also post a public reply under the comment at the same time.
+Someone comments `LINK` on your reel, and OpenReply sends the right private reply through the official Meta API. The hosted service adds signup, a 14-day trial, Stripe billing, fixed monthly usage, and a managed deployment around the MIT-licensed automation core.
 
-ManyChat does this and charges a monthly fee. OpenReply is the same core feature, free, running on your own infrastructure, with no seat limits and no plan caps.
+OpenReply Pro costs £19 monthly or £190 yearly. It includes 1 Instagram professional account, unlimited campaigns, 3 workspace members, and 5,000 DMs each month. Sends stop at the limit, so there are no automatic overages.
 
-> **OpenReply is self-hosted. You have to deploy your own copy.**
+> **Private launch status**
 >
-> [openreply.diwen.dev](https://openreply.diwen.dev) is a demo of the dashboard, not a service you can sign up for. Creating an account there will never send a DM for you, and there is no hosted plan to upgrade to.
->
-> Instagram automation runs against *your* Meta app, and Meta ties that app to a domain and a webhook URL you control. So a working instance means: your fork deployed, your domain pointed at it, your Meta app created, and your webhook registered. [docs/setup.md](docs/setup.md) walks through all of it.
+> The hosted app and billing path are being released first. Instagram connection is limited to Meta-approved app testers until the central Meta app completes business verification and App Review for Advanced Access. Self-hosting remains available through [docs/setup.md](docs/setup.md).
 
 > If this saves you a subscription or a weekend of building, a star on the repo genuinely helps other people find it.
 
 ## Why this exists
 
-Comment-to-DM is one feature, but every tool that offers it wants a recurring subscription for it. The actual work is a webhook, a keyword match, and one API call to Meta. That does not need to cost anything to run for a single account.
+Comment-to-DM is a focused campaign job. OpenReply keeps setup, reporting, and pricing tied to that job instead of charging by active contacts across a broad chatbot suite.
 
 OpenReply is built around Meta's official Instagram private replies. It does not scrape, it does not automate a browser, and it never asks for an Instagram password. That keeps your account inside Meta's rules, which matters if you care about not getting flagged.
 
@@ -38,8 +36,8 @@ OpenReply is built around Meta's official Instagram private replies. It does not
 - Follow gate. Optionally require a follow before you hand over the link. The DM asks the commenter to follow and tap a button; on tap, OpenReply checks Meta's `is_user_follow_business` flag and only sends the link once they follow, re-prompting until then. It fails open (sends the link anyway) when Instagram does not return follow status, so a real follower is never trapped.
 - Personalization. Use `{username}` in your message to greet the commenter by name.
 - Per-account rate limiting. Stays under Meta's documented cap of 750 private replies per hour, and queues the overflow instead of dropping it.
-- Multiple Instagram accounts. Connect several professional accounts under one workspace, each with its own limits.
-- Workspaces and roles. Owner, admin, and member roles with invite links, useful if you run this for clients.
+- One Instagram account per hosted Pro workspace. Self-hosted operators can change the plan policy in their own fork.
+- Workspaces and roles. Owner, admin, and member roles with invite links for teams of up to 3 people on Pro.
 - Campaign templates. Start from a preset instead of a blank form.
 - Inbox. Read your Instagram DM conversations and reply from the dashboard, inside Meta's 24-hour messaging window. Cached so it loads instantly on repeat visits.
 - DM logs. Every send, skip, and failure is logged with a reason.
@@ -55,7 +53,16 @@ OpenReply is built around Meta's official Instagram private replies. It does not
 
 The web app receives the webhook and serves the dashboard. A separate worker process does the sending, because the send has to survive rate limits and retries. Both talk to the same Postgres and Redis.
 
-## Quick start
+## Hosted launch offer
+
+- 14 days and 100 DMs free, with no card required.
+- £19/month or £190/year after the trial.
+- 5,000 DMs per month, 1 Instagram account, unlimited campaigns, and 3 members.
+- No automatic overages.
+
+The hosted app needs production Postgres, Redis, email, Stripe, Meta, web worker, and encryption configuration. The environment contract is in [.env.example](.env.example).
+
+## Self-hosted quick start
 
 You need a few free accounts before anything works: a Meta developer app, a Resend account for login emails, and somewhere to host (Vercel for the web app, Railway for the worker plus Postgres and Redis). The Instagram account you connect has to be a Business or Creator account, not a personal one.
 
@@ -65,15 +72,16 @@ The honest version: the code deploys in minutes, but the Meta app setup is the p
 
 This is the part people skip. There is no shared instance to join — the button below creates *your* deployment, on *your* domain, which is the only thing your Meta app is allowed to talk to.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/diwenne/openreply)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/jaimedhenriques/openreply)
 
 ### Run it locally
 
 ```bash
-git clone https://github.com/diwenne/openreply.git
+git clone https://github.com/jaimedhenriques/openreply.git
 cd openreply
 npm install
 cp .env.example .env      # then fill in the values, see docs/setup.md
+# set OPENREPLY_SELF_HOSTED=true in .env
 docker-compose up -d      # starts Postgres and Redis
 npm run db:migrate
 npm run dev               # web app on http://localhost:3000
@@ -107,7 +115,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
 
 ## Credits
 
-Built and maintained by Diwen Huang.
+The upstream OpenReply product was built and maintained by Diwen Huang.
 
 - GitHub: [@diwenne](https://github.com/diwenne)
 - Website: [diwenhuang.ca](https://diwenhuang.ca)

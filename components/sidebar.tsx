@@ -23,12 +23,14 @@ interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   workspaceName: string;
+  planLabel: string;
 }
 
 export default function Sidebar({
   isOpen,
   onClose,
   workspaceName,
+  planLabel,
 }: SidebarProps) {
   const pathname = usePathname();
 
@@ -88,7 +90,7 @@ export default function Sidebar({
 
         <div className="px-5 py-4 border-t border-border">
           <p className="text-sm text-foreground truncate">{workspaceName}</p>
-          <p className="text-xs text-muted">Self-hosted</p>
+          <p className="text-xs text-muted">{planLabel}</p>
         </div>
       </aside>
     </>

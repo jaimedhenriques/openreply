@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 
     if (!connection.allowed) {
       return NextResponse.redirect(
-        `${baseUrl}/settings?instagram=already_connected`
+        `${baseUrl}/settings?instagram=${connection.reason}`
       );
     }
 

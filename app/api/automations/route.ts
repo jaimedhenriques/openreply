@@ -10,6 +10,7 @@ import {
   canManageWorkspace,
   getCurrentWorkspaceContext,
 } from "@/lib/workspace-access";
+import { getWorkspaceEntitlement, PLAN_LIMITS } from "@/lib/billing/plans";
 
 // This list is read-your-writes (created/imported campaigns must show up
 // immediately), so never cache it at the route or CDN layer.
@@ -292,6 +293,22 @@ export async function POST(request: NextRequest) {
   }
 
   const workspaceId = context.workspaceId;
+
+  const entitlement = getWorkspaceEntitlement(context.workspace);
+  const automationLimit = PLAN_LIMITS[entitlement].maxAutomations;
+  if (Number.isFinite(automationLimit)) {
+    const automationCount = await prisma.automation.count({ where: { workspaceId } });
+    if (automationCount >= automationLimit) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Your trial includes one campaign. Upgrade to create more.",
+          code: "PLAN_LIMIT",
+        },
+        { status: 402 }
+      );
+    }
+  }
 
   const body = await request.json();
   const parsed = createAutomationSchema.safeParse(body);

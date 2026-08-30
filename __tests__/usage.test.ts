@@ -41,9 +41,12 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-// Mirrors MONTHLY_DM_LIMIT in lib/billing/usage.ts. Must stay within int4
-// range so the value can be compared against the dmsSentThisPeriod column.
-const LIMIT = 2_000_000_000;
+const LIMIT = 100;
+const activeTrial = {
+  plan: "FREE" as const,
+  subscriptionStatus: "NONE" as const,
+  trialEndsAt: new Date("2026-06-07T12:00:00.000Z"),
+};
 
 describe("reserveWorkspaceDMSend", () => {
   it("atomically increments usage when the workspace is under its limit", async () => {
@@ -52,6 +55,7 @@ describe("reserveWorkspaceDMSend", () => {
       .mockResolvedValueOnce({ count: 0 })
       .mockResolvedValueOnce({ count: 1 });
     mockTx.workspace.findUnique.mockResolvedValueOnce({
+      ...activeTrial,
       usagePeriodStart: periodStart,
       dmsSentThisPeriod: 99,
     });
@@ -79,6 +83,7 @@ describe("reserveWorkspaceDMSend", () => {
     const periodStart = new Date("2026-05-01T00:00:00.000Z");
     mockTx.workspace.updateMany.mockResolvedValueOnce({ count: 0 });
     mockTx.workspace.findUnique.mockResolvedValueOnce({
+      ...activeTrial,
       usagePeriodStart: periodStart,
       dmsSentThisPeriod: LIMIT,
     });
@@ -98,6 +103,7 @@ describe("reserveWorkspaceDMSend", () => {
       .mockResolvedValueOnce({ count: 0 });
     mockTx.workspace.findUnique
       .mockResolvedValueOnce({
+        ...activeTrial,
         usagePeriodStart: periodStart,
         dmsSentThisPeriod: 99,
       })
@@ -111,6 +117,23 @@ describe("reserveWorkspaceDMSend", () => {
     expect(result.allowed).toBe(false);
     expect(result.reserved).toBe(false);
     expect(result.remaining).toBe(LIMIT - 100);
+  });
+
+  it("denies sends after the trial expires", async () => {
+    const periodStart = new Date("2026-05-01T00:00:00.000Z");
+    mockTx.workspace.updateMany.mockResolvedValueOnce({ count: 0 });
+    mockTx.workspace.findUnique.mockResolvedValueOnce({
+      ...activeTrial,
+      trialEndsAt: new Date("2026-05-23T12:00:00.000Z"),
+      usagePeriodStart: periodStart,
+      dmsSentThisPeriod: 0,
+    });
+
+    await expect(reserveWorkspaceDMSend("workspace_123")).resolves.toMatchObject({
+      allowed: false,
+      limit: 0,
+      remaining: 0,
+    });
   });
 });
 

@@ -11,6 +11,7 @@ import {
   canManageWorkspace,
   getCurrentWorkspaceContext,
 } from "@/lib/workspace-access";
+import { getWorkspaceEntitlement, PLAN_LIMITS } from "@/lib/billing/plans";
 
 const inviteSchema = z.object({
   email: z.string().email(),
@@ -118,6 +119,46 @@ export async function POST(request: NextRequest) {
     where: { email },
     select: { id: true },
   });
+  const [memberCount, pendingInvitationCount, existingSeat] = await Promise.all([
+    prisma.workspaceMember.count({ where: { workspaceId: context.workspaceId } }),
+    prisma.workspaceInvitation.count({
+      where: { workspaceId: context.workspaceId, status: "PENDING" },
+    }),
+    existingUser
+      ? prisma.workspaceMember.findUnique({
+          where: {
+            workspaceId_userId: {
+              workspaceId: context.workspaceId,
+              userId: existingUser.id,
+            },
+          },
+          select: { id: true },
+        })
+      : prisma.workspaceInvitation.findUnique({
+          where: {
+            workspaceId_email: {
+              workspaceId: context.workspaceId,
+              email,
+            },
+          },
+          select: { id: true },
+        }),
+  ]);
+  const entitlement = getWorkspaceEntitlement(context.workspace);
+  const memberLimit = PLAN_LIMITS[entitlement].maxWorkspaceMembers;
+  if (!existingSeat && memberCount + pendingInvitationCount >= memberLimit) {
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          entitlement === "PRO"
+            ? "OpenReply Pro includes 3 workspace members."
+            : "Upgrade to Pro before inviting teammates.",
+        code: "PLAN_LIMIT",
+      },
+      { status: 402 }
+    );
+  }
 
   if (existingUser) {
     await prisma.workspaceMember.upsert({

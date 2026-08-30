@@ -6,7 +6,7 @@ interface PublicSiteHeaderProps {
 
 const navLinks = [
   { label: "Templates", href: "/templates", key: "templates" },
-  { label: "Agencies", href: "/instagram-dm-automation-agencies", key: "agencies" },
+  { label: "Teams", href: "/instagram-dm-automation-agencies", key: "agencies" },
   { label: "Pricing", href: "/#pricing", key: "pricing" },
   { label: "Security", href: "/#security", key: "security" },
 ];

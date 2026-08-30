@@ -1,56 +1,42 @@
-name: CI
+name: OpenReply launch checks
 
 on:
   push:
-    branches: [main]
+    branches: [main, "feat/**"]
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
-  test:
-    name: TypeScript checks
+  verify:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
+    env:
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ci-only-nextauth-secret-value
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/openreply
+      REDIS_URL: redis://localhost:6379
+      INSTAGRAM_APP_ID: ci-instagram-app
+      INSTAGRAM_APP_SECRET: ci-instagram-secret
+      FACEBOOK_APP_SECRET: ci-facebook-secret
+      WEBHOOK_VERIFY_TOKEN: ci-webhook-token
+      STRIPE_SECRET_KEY: sk_test_ci_only
+      STRIPE_WEBHOOK_SECRET: whsec_ci_only
+      STRIPE_PRICE_PRO_MONTHLY: price_ci_monthly
+      STRIPE_PRICE_PRO_ANNUAL: price_ci_annual
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 24
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate Prisma client
-        run: npm run db:generate
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/instrareply
-
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Run tests
-        run: npm test
-
-      - name: Build
-        run: npm run build
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/instrareply
-          REDIS_URL: redis://localhost:6379
-          NEXTAUTH_URL: http://localhost:3000
-          NEXTAUTH_SECRET: test-secret-for-ci-build
-          CRON_SECRET: test-secret-for-ci-cron
-          ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
-          RESEND_API_KEY: re_test
-          EMAIL_FROM: "InstaReply <login@example.com>"
-          META_GRAPH_API_VERSION: v25.0
-          INSTAGRAM_APP_ID: test
-          INSTAGRAM_APP_SECRET: test
-          FACEBOOK_APP_SECRET: test
-          WEBHOOK_VERIFY_TOKEN: test
+      - name: Prepare deterministic CI encryption key
+        run: printf 'ENCRYPTION_KEY=%064d\n' 0 >> "$GITHUB_ENV"
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
