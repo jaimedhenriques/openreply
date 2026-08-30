@@ -55,6 +55,11 @@ export async function GET(request: NextRequest) {
       where: { id: workspaceId },
       select: {
         name: true,
+        plan: true,
+        subscriptionStatus: true,
+        trialEndsAt: true,
+        currentPeriodEnd: true,
+        stripeCustomerId: true,
         dmsSentThisPeriod: true,
       },
     }),
@@ -194,7 +199,12 @@ export async function GET(request: NextRequest) {
     data: {
       userName: firstName,
       contactsCount: contactRows.length,
-      workspace,
+      workspace: workspace
+        ? {
+            ...workspace,
+            selfHosted: process.env.OPENREPLY_SELF_HOSTED === "true",
+          }
+        : null,
       instagramAccount,
       instagramAccounts,
       selectedInstagramAccountId: selectedAccountId,

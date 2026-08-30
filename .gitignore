@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Local Helix delivery evidence. The manifest is tracked; proofs are generated
+# after a commit exists and can contain machine/account metadata.
+.helix/evidence/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

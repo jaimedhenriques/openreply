@@ -24,6 +24,8 @@ The parts most worth scrutiny:
 - Tracked link redirects
 - Worker retry and dedupe behavior
 - Environment variable handling
+- Stripe webhook signature verification and billing-event idempotency
+- Subscription and usage-limit enforcement
 
 ## Secrets
 
@@ -32,6 +34,7 @@ Never commit any of these, and rotate one if it is exposed anywhere it could be 
 - `DATABASE_URL`, `REDIS_URL`
 - `NEXTAUTH_SECRET`, `CRON_SECRET`, `ENCRYPTION_KEY`
 - `RESEND_API_KEY`
+- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
 - `INSTAGRAM_APP_SECRET`, `FACEBOOK_APP_SECRET`
 - Live webhook payloads that contain user data
 

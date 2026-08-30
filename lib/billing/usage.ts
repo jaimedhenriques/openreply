@@ -1,12 +1,6 @@
 import { prisma } from "@/lib/db/client";
 import type { Prisma } from "@/app/generated/prisma/client";
-
-// Self-hosted build: usage is still counted per month so the dashboard can
-// report volume, but no cap is enforced. Meta's own rate limits apply instead.
-// Must stay within PostgreSQL int4 range, since dmsSentThisPeriod is an Int
-// column and this value is used in a `less-than` comparison against it. Two
-// billion DMs/month is effectively unlimited without overflowing the column.
-const MONTHLY_DM_LIMIT = 2_000_000_000;
+import { getWorkspaceEntitlement, PLAN_LIMITS } from "@/lib/billing/plans";
 
 function getMonthStart(date = new Date()): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
@@ -55,6 +49,9 @@ export async function reserveWorkspaceDMSend(
     const workspace = await tx.workspace.findUnique({
       where: { id: workspaceId },
       select: {
+        plan: true,
+        subscriptionStatus: true,
+        trialEndsAt: true,
         usagePeriodStart: true,
         dmsSentThisPeriod: true,
       },
@@ -70,7 +67,8 @@ export async function reserveWorkspaceDMSend(
       };
     }
 
-    const limit = MONTHLY_DM_LIMIT;
+    const entitlement = getWorkspaceEntitlement(workspace);
+    const limit = PLAN_LIMITS[entitlement].maxDMsPerMonth;
 
     if (workspace.dmsSentThisPeriod >= limit) {
       return {
@@ -128,6 +126,9 @@ export async function canSendDMForWorkspace(workspaceId: string): Promise<{
   const workspace = await prisma.workspace.findUnique({
     where: { id: workspaceId },
     select: {
+      plan: true,
+      subscriptionStatus: true,
+      trialEndsAt: true,
       dmsSentThisPeriod: true,
     },
   });
@@ -136,7 +137,8 @@ export async function canSendDMForWorkspace(workspaceId: string): Promise<{
     return { allowed: false, remaining: 0, limit: 0 };
   }
 
-  const limit = MONTHLY_DM_LIMIT;
+  const entitlement = getWorkspaceEntitlement(workspace);
+  const limit = PLAN_LIMITS[entitlement].maxDMsPerMonth;
   const remaining = Math.max(0, limit - workspace.dmsSentThisPeriod);
 
   return {

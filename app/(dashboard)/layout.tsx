@@ -3,6 +3,7 @@ import DashboardShell from "@/components/dashboard-shell";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/client";
 import { ensureWorkspaceForUser } from "@/lib/workspace";
+import { getWorkspaceEntitlement } from "@/lib/billing/plans";
 
 export default async function DashboardLayout({
   children,
@@ -24,12 +25,22 @@ export default async function DashboardLayout({
     orderBy: { connectedAt: "desc" },
     select: { username: true },
   });
+  const entitlement = getWorkspaceEntitlement(workspace);
 
   return (
     <DashboardShell
       workspaceName={workspace.name}
       instagramUsername={accounts[0]?.username ?? null}
       instagramAccountCount={accounts.length}
+      planLabel={
+        entitlement === "SELF_HOSTED"
+          ? "Self-hosted"
+          : entitlement === "PRO"
+          ? "Pro · 5,000 DMs"
+          : entitlement === "TRIAL"
+            ? "14-day trial"
+            : "Trial ended"
+      }
     >
       {children}
     </DashboardShell>

@@ -3,10 +3,23 @@
 import { Suspense, useEffect, useState } from "react";
 import type { AccountOption } from "@/components/account-select";
 import { InstagramConnectNotice } from "@/components/instagram-connect-notice";
+import { BillingNotice } from "@/components/billing-notice";
 
 interface SettingsData {
   workspace: {
     name: string;
+    plan: "FREE" | "PRO";
+    subscriptionStatus:
+      | "NONE"
+      | "TRIALING"
+      | "ACTIVE"
+      | "PAST_DUE"
+      | "UNPAID"
+      | "CANCELED";
+    trialEndsAt: string;
+    currentPeriodEnd: string | null;
+    stripeCustomerId: string | null;
+    selfHosted: boolean;
     dmsSentThisPeriod: number;
   };
   instagramAccount: {
@@ -118,6 +131,34 @@ export default function SettingsPage() {
     setBusy(null);
   }
 
+  async function startCheckout(interval: "monthly" | "annual") {
+    setBusy(`checkout:${interval}`);
+    const res = await fetch("/api/billing/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ interval }),
+    });
+    const payload = await res.json();
+    if (payload.success && payload.url) {
+      window.location.assign(payload.url);
+      return;
+    }
+    setMemberError(payload.error ?? "Could not start checkout");
+    setBusy(null);
+  }
+
+  async function openBillingPortal() {
+    setBusy("portal");
+    const res = await fetch("/api/billing/portal", { method: "POST" });
+    const payload = await res.json();
+    if (payload.success && payload.url) {
+      window.location.assign(payload.url);
+      return;
+    }
+    setMemberError(payload.error ?? "Could not open billing");
+    setBusy(null);
+  }
+
   if (loading) {
     return <div className="panel rounded p-8 h-64" />;
   }
@@ -126,6 +167,12 @@ export default function SettingsPage() {
   const canManageMembers =
     membersData?.currentUserRole === "OWNER" ||
     membersData?.currentUserRole === "ADMIN";
+  const canManageBilling = membersData?.currentUserRole === "OWNER";
+  const hasActivePro = Boolean(
+    data?.workspace.plan === "PRO" &&
+      ["ACTIVE", "TRIALING"].includes(data.workspace.subscriptionStatus)
+  );
+  const isSelfHosted = data?.workspace.selfHosted === true;
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -134,6 +181,9 @@ export default function SettingsPage() {
           page fails the production build without one. */}
       <Suspense fallback={null}>
         <InstagramConnectNotice />
+      </Suspense>
+      <Suspense fallback={null}>
+        <BillingNotice />
       </Suspense>
 
       <section className="panel rounded p-4 sm:p-6">
@@ -209,12 +259,18 @@ export default function SettingsPage() {
         </div>
 
         <div className="mt-6 pt-4 border-t border-border flex gap-3">
-          <a
-            href="/api/instagram/connect"
-            className="px-4 py-2 rounded text-sm font-medium transition-colors bg-accent text-white hover:bg-accent-hover"
-          >
-            {accounts.length > 0 ? "Connect another account" : "Connect Instagram"}
-          </a>
+          {accounts.length === 0 ? (
+            <a
+              href="/api/instagram/connect"
+              className="px-4 py-2 rounded text-sm font-medium transition-colors bg-accent text-white hover:bg-accent-hover"
+            >
+              Connect Instagram
+            </a>
+          ) : (
+            <p className="text-xs text-muted">
+              The launch plan includes 1 Instagram professional account.
+            </p>
+          )}
         </div>
       </section>
 
@@ -321,6 +377,85 @@ export default function SettingsPage() {
       </section>
 
       <section className="panel rounded p-4 sm:p-6">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+              Plan
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-foreground">
+              {isSelfHosted
+                ? "Self-hosted"
+                : hasActivePro
+                ? "OpenReply Pro"
+                : new Date(data?.workspace.trialEndsAt ?? 0) > new Date()
+                  ? "Free trial"
+                  : "Trial ended"}
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              {isSelfHosted
+                ? "Unlimited local plan. Meta's platform rate limits still apply."
+                : hasActivePro
+                ? `5,000 DMs each month${
+                    data?.workspace.currentPeriodEnd
+                      ? ` · renews ${new Date(
+                          data.workspace.currentPeriodEnd
+                        ).toLocaleDateString()}`
+                      : ""
+                  }`
+                : `100 DMs during a 14-day trial · ends ${new Date(
+                    data?.workspace.trialEndsAt ?? 0
+                  ).toLocaleDateString()}`}
+            </p>
+          </div>
+
+          {isSelfHosted ? null : !canManageBilling ? (
+            <p className="text-sm text-muted">The workspace owner manages billing.</p>
+          ) : hasActivePro ? (
+            <button
+              type="button"
+              onClick={openBillingPortal}
+              disabled={busy === "portal"}
+              className="rounded border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-border-hover disabled:opacity-50"
+            >
+              {busy === "portal" ? "Opening..." : "Manage billing"}
+            </button>
+          ) : (
+            <div className="flex flex-col gap-2 sm:items-end">
+              <button
+                type="button"
+                onClick={() => startCheckout("monthly")}
+                disabled={busy?.startsWith("checkout:")}
+                className="rounded bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
+              >
+                {busy === "checkout:monthly" ? "Opening..." : "Choose £19 monthly"}
+              </button>
+              <button
+                type="button"
+                onClick={() => startCheckout("annual")}
+                disabled={busy?.startsWith("checkout:")}
+                className="rounded border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-border-hover disabled:opacity-50"
+              >
+                {busy === "checkout:annual" ? "Opening..." : "Choose £190 yearly"}
+              </button>
+              {data?.workspace.stripeCustomerId && (
+                <button
+                  type="button"
+                  onClick={openBillingPortal}
+                  disabled={busy === "portal"}
+                  className="px-3 py-1 text-xs font-medium text-muted underline underline-offset-2 disabled:opacity-50"
+                >
+                  Open previous billing account
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+        {memberError && (
+          <p className="mt-4 text-sm text-error">{memberError}</p>
+        )}
+      </section>
+
+      <section className="panel rounded p-4 sm:p-6">
         <h2 className="text-base font-semibold mb-6">Usage</h2>
         <div className="flex items-center justify-between gap-3 py-3">
           <div>
@@ -328,11 +463,20 @@ export default function SettingsPage() {
               DMs sent this month
             </p>
             <p className="text-xs text-muted mt-0.5">
-              Self-hosted — no plan limits.
+              {isSelfHosted
+                ? "Hosted plan limits are disabled on this deployment."
+                : hasActivePro
+                ? "5,000 included. Sends stop at the limit; there are no overages."
+                : "100 included in the trial. Upgrade to keep campaigns sending."}
             </p>
           </div>
           <span className="text-sm font-semibold text-foreground">
-            {data?.workspace.dmsSentThisPeriod ?? 0}
+            {data?.workspace.dmsSentThisPeriod ?? 0} /{" "}
+            {isSelfHosted
+              ? "Unlimited"
+              : hasActivePro
+              ? "5,000"
+              : "100"}
           </span>
         </div>
       </section>

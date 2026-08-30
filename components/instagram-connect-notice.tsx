@@ -35,6 +35,17 @@ const MESSAGES: Record<string, { tone: Tone; title: string; detail: string }> = 
     detail:
       "That Instagram account is connected to another workspace. Disconnect it there first, or connect a different account.",
   },
+  plan_limit: {
+    tone: "warning",
+    title: "Instagram account limit reached",
+    detail:
+      "OpenReply Pro includes one Instagram professional account. Disconnect the current account before connecting a different one.",
+  },
+  workspace_not_found: {
+    tone: "error",
+    title: "Workspace unavailable",
+    detail: "Sign in again before connecting Instagram.",
+  },
 };
 
 export function InstagramConnectNotice() {

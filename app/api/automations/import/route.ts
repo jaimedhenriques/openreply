@@ -8,6 +8,7 @@ import {
   canManageWorkspace,
   getCurrentWorkspaceContext,
 } from "@/lib/workspace-access";
+import { getWorkspaceEntitlement, PLAN_LIMITS } from "@/lib/billing/plans";
 
 const campaignSchema = z.object({
   postId: z.string().min(1),
@@ -49,6 +50,24 @@ export async function POST(request: NextRequest) {
       { success: false, error: "Invalid import data" },
       { status: 400 }
     );
+  }
+
+  const entitlement = getWorkspaceEntitlement(context.workspace);
+  const automationLimit = PLAN_LIMITS[entitlement].maxAutomations;
+  if (Number.isFinite(automationLimit)) {
+    const automationCount = await prisma.automation.count({
+      where: { workspaceId: context.workspaceId },
+    });
+    if (automationCount + parsed.data.campaigns.length > automationLimit) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Your trial includes one campaign. Upgrade before importing more.",
+          code: "PLAN_LIMIT",
+        },
+        { status: 402 }
+      );
+    }
   }
 
   const account = await getWorkspaceInstagramAccount(
