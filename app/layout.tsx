@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     "comment to DM",
     "instagram private replies",
     "social commerce",
-    "manychat alternative",
+    "instagram campaign analytics",
   ],
   manifest: "/manifest.webmanifest",
   appleWebApp: {

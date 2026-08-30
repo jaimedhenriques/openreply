@@ -43,11 +43,11 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-bold">Open-source core</h2>
+        <h2 className="text-xl font-bold">Hosted service</h2>
         <p className="mt-3">
-          The public repository is MIT licensed. Hosted SaaS infrastructure,
-          managed support, agency workflows, analytics, reports, and other paid
-          service features may be provided separately from the open-source core.
+          OpenReply is offered as a hosted campaign service. Managed support,
+          agency workflows, analytics, reports, and other paid features are part
+          of that hosted service.
         </p>
       </section>
     </LegalShell>

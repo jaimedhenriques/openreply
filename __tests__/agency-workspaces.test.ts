@@ -108,8 +108,8 @@ describe("agency workspace helpers", () => {
     expect(normalizeInvitationEmail(" Team@Agency.COM ")).toBe(
       "team@agency.com"
     );
-    expect(buildInvitationUrl("token_123", "https://manychat-alternative.com/")).toBe(
-      "https://manychat-alternative.com/invite/token_123"
+    expect(buildInvitationUrl("token_123", "https://openreply.test/")).toBe(
+      "https://openreply.test/invite/token_123"
     );
   });
 });

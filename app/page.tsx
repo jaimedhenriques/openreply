@@ -9,17 +9,6 @@ export const metadata: Metadata = {
     "Turn Instagram keyword comments into tracked private replies for GBP 19 per month. One professional account, unlimited campaigns, and no automatic overages.",
 };
 
-const GITHUB_URL = "https://github.com/jaimedhenriques/openreply";
-const SETUP_DOCS_URL =
-  "https://github.com/jaimedhenriques/openreply/blob/main/docs/setup.md";
-
-function formatStars(count: number): string {
-  if (count >= 1000) {
-    return `${(count / 1000).toFixed(1)}K`;
-  }
-  return count.toLocaleString();
-}
-
 const trustPoints = [
   "No card for the trial",
   "Official Meta API",
@@ -267,22 +256,7 @@ function DashboardPreview() {
   );
 }
 
-async function getGitHubStars(): Promise<number | null> {
-  try {
-    const res = await fetch("https://api.github.com/repos/jaimedhenriques/openreply", {
-      headers: { Accept: "application/vnd.github+json" },
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return null;
-    const data = (await res.json()) as { stargazers_count?: number };
-    return typeof data.stargazers_count === "number" ? data.stargazers_count : null;
-  } catch {
-    return null;
-  }
-}
-
 export default async function Home() {
-  const stars = await getGitHubStars();
   return (
     <main id="main-content" className="min-h-screen bg-background text-foreground">
       <a href="#main-content" className="skip-link">Skip to content</a>
@@ -473,9 +447,7 @@ export default async function Home() {
               ))}
             </div>
             <p className="mt-6 text-xs leading-5 text-muted">
-              Card details are requested only when you choose Pro. The public
-              repository remains available under the MIT license for teams that
-              prefer to self-host.
+              Card details are requested only when you choose Pro.
             </p>
           </div>
         </div>
@@ -490,18 +462,6 @@ export default async function Home() {
             <p className="mt-4 text-base text-muted">
               Start with 100 DMs over 14 days. Upgrade only when the campaign proves useful.
             </p>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              Prefer to run the infrastructure yourself? Clone the repo and follow the{" "}
-              <a
-                href={SETUP_DOCS_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="font-bold text-accent underline underline-offset-2 transition-colors hover:text-accent-hover"
-              >
-                setup guide
-              </a>{" "}
-              . A self-hosted instance needs its own Meta app and domain.
-            </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
             <Link
@@ -510,12 +470,6 @@ export default async function Home() {
             >
               Start free
             </Link>
-            <a
-              href={GITHUB_URL}
-              className="pressable inline-flex min-h-12 items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground hover:border-border-hover hover:bg-surface"
-            >
-              View on GitHub
-            </a>
           </div>
         </div>
       </section>
@@ -527,14 +481,6 @@ export default async function Home() {
             <Link href="/privacy" className="hover:text-foreground">Privacy</Link>
             <Link href="/terms" className="hover:text-foreground">Terms</Link>
             <Link href="/data-deletion" className="hover:text-foreground">Data deletion</Link>
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
-            >
-              GitHub{stars !== null ? ` · ${formatStars(stars)} stars` : ""}
-            </a>
           </div>
         </div>
       </footer>

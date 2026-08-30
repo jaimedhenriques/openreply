@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     "Instagram comment to DM templates",
     "comment to DM campaigns",
     "Instagram DM automation templates",
-    "Manychat alternative templates",
+    "Instagram comment-to-DM templates",
   ],
 };
 

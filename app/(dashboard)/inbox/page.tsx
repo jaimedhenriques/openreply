@@ -272,7 +272,7 @@ export default function InboxPage() {
 
       <div className="grid h-[calc(100dvh-11rem)] grid-cols-1 overflow-hidden rounded border border-border sm:grid-cols-[300px_1fr]">
         {/* Conversation list. On mobile it takes the full pane and is hidden
-            once a thread is open (ManyChat-style); on sm+ it is always shown. */}
+            once a thread is open; on sm+ it is always shown. */}
         <div
           className={`min-h-0 flex-col border-b border-border sm:flex sm:border-b-0 sm:border-r ${
             active ? "hidden" : "flex"
