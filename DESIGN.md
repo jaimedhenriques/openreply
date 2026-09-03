@@ -1,19 +1,20 @@
 # OpenReply Design System
 
-OpenReply should feel calm, direct, and operational. Creators use it between publishing, checking replies, and running campaigns, often from a phone. The interface must make the next useful action obvious without hiding delivery detail.
+OpenReply should feel direct, kinetic, and assured in public, then calm and operational inside the product. Creators use it between publishing, checking replies, and running campaigns, often from a phone. The interface must make the next useful action obvious without hiding delivery detail.
 
 ## Registers
 
-- Public surfaces: confident product proof, generous pacing, direct copy, and one clear conversion path.
+- Public surfaces: committed color, full-viewport pacing, oversized type, direct product proof, and one clear conversion path.
 - Authenticated product: compact system UI, familiar controls, visible state, and fast recovery from errors.
 - Voice: candid, precise, and useful. Avoid chatbot language, inflated claims, and abstract automation jargon.
 
 ## Foundation
 
 - Type: the platform system stack. Public display text uses weight 600, tight optical tracking no lower than `-0.04em`, and balanced wrapping. Product UI uses a fixed rem scale.
-- Background: near-white with a small orange-hue tint.
+- Product background: cool near-white with a small violet tint.
 - Ink: warm near-black.
-- Action: dark orange. It is reserved for primary actions, current selection, links, and focus.
+- Product action: saturated blue. It is reserved for primary actions, current selection, links, and focus.
+- Public palette: electric blue, ink, acid yellow, coral, and pale lilac. Large fields of flat color carry the identity; gradients are excluded.
 - Surfaces: one neutral layer for panels and one darker hover layer. Use color changes and hairlines for hierarchy.
 - Shape: 12–16px for major containers, 8–12px for controls and compact panels, full-pill only for primary actions and short filters.
 - Shadow: avoid on interface cards and buttons. Product screenshots may use a restrained shadow when they need separation.
@@ -29,12 +30,14 @@ OpenReply should feel calm, direct, and operational. Creators use it between pub
 ## Public Flow
 
 1. State the comment-to-DM outcome and Meta API constraint above the fold.
-2. Show the product with demo data that is labelled as demo data.
-3. Explain the real Connect → Build → Deliver sequence.
+2. Show the comment, keyword match, and delivered DM as the dominant product artifact.
+3. Explain the real Comment → Match → DM sequence.
 4. Prove observability and security.
 5. Present one hosted plan with the trial, cap, and overage policy in plain language.
 
-Avoid hero metric grids, repeated uppercase eyebrows, identical feature cards, decorative gradients, and generic automation claims.
+Use keyword motion only when it reinforces the trigger model. Motion must leave content visible by default and stop under reduced-motion preferences.
+
+Avoid hero metric grids, repeated uppercase eyebrows, identical feature cards, decorative gradients, generic automation claims, and third-party visual assets.
 
 ## Product Flow
 

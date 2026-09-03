@@ -16,6 +16,7 @@ const navLinks = [
 
 export default function PublicSiteHeader({ active }: PublicSiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const isLaunch = active === "home";
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -27,15 +28,21 @@ export default function PublicSiteHeader({ active }: PublicSiteHeaderProps) {
   }, [menuOpen]);
 
   return (
-    <header className="material-bar sticky top-0 z-40 border-b border-border">
+    <header
+      className={`public-site-header sticky top-0 z-40 ${
+        isLaunch
+          ? "public-site-header-launch"
+          : "material-bar border-b border-border"
+      }`}
+    >
       <div className="mx-auto flex h-[4.5rem] w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
         <Link
           href="/"
           className="inline-flex min-h-11 items-center rounded-lg pr-2"
           aria-label="OpenReply home"
         >
-          <span className="text-lg font-bold tracking-[-0.02em] text-foreground">
-            OpenReply
+          <span className={`text-lg font-extrabold tracking-[-0.03em] ${isLaunch ? "text-white" : "text-foreground"}`}>
+            OpenReply<span className={isLaunch ? "text-[#e3f23e]" : "text-accent"}>.</span>
           </span>
         </Link>
 
@@ -47,8 +54,12 @@ export default function PublicSiteHeader({ active }: PublicSiteHeaderProps) {
               aria-current={active === link.key ? "page" : undefined}
               className={`pressable inline-flex min-h-11 items-center rounded-lg px-3.5 text-sm font-semibold ${
                 active === link.key
-                  ? "bg-accent/10 text-accent"
-                  : "text-muted hover:bg-surface hover:text-foreground"
+                  ? isLaunch
+                    ? "bg-white/15 text-white"
+                    : "bg-accent/10 text-accent"
+                  : isLaunch
+                    ? "text-white/80 hover:bg-white/10 hover:text-white"
+                    : "text-muted hover:bg-surface hover:text-foreground"
               }`}
             >
               {link.label}
@@ -59,13 +70,21 @@ export default function PublicSiteHeader({ active }: PublicSiteHeaderProps) {
         <div className="hidden items-center gap-1.5 md:flex">
           <Link
             href="/login"
-            className="pressable inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-semibold text-muted hover:bg-surface hover:text-foreground"
+            className={`pressable inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-semibold ${
+              isLaunch
+                ? "text-white/80 hover:bg-white/10 hover:text-white"
+                : "text-muted hover:bg-surface hover:text-foreground"
+            }`}
           >
             Sign in
           </Link>
           <Link
             href="/login"
-            className="pressable inline-flex min-h-11 items-center justify-center rounded-lg bg-accent px-5 text-sm font-bold text-accent-foreground hover:bg-accent-hover"
+            className={`pressable inline-flex min-h-11 items-center justify-center rounded-full px-5 text-sm font-bold ${
+              isLaunch
+                ? "bg-[#16131d] text-white hover:bg-[#292333]"
+                : "bg-accent text-accent-foreground hover:bg-accent-hover"
+            }`}
           >
             Start free
           </Link>
@@ -77,7 +96,11 @@ export default function PublicSiteHeader({ active }: PublicSiteHeaderProps) {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-controls="public-mobile-navigation"
-            className="pressable flex min-h-11 cursor-pointer items-center justify-center rounded-lg border border-border bg-background px-4 text-sm font-semibold text-foreground hover:bg-surface"
+            className={`pressable flex min-h-11 cursor-pointer items-center justify-center rounded-full px-4 text-sm font-semibold ${
+              isLaunch
+                ? "border border-white/50 bg-transparent text-white hover:bg-white/10"
+                : "border border-border bg-background text-foreground hover:bg-surface"
+            }`}
           >
             {menuOpen ? "Close" : "Menu"}
           </button>

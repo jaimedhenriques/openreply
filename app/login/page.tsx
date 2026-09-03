@@ -49,49 +49,52 @@ export default async function LoginPage({
   }
 
   return (
-    <main id="main-content" className="min-h-screen bg-background text-foreground">
+    <main id="main-content" tabIndex={-1} className="login-page min-h-screen bg-background text-foreground">
       <a href="#main-content" className="skip-link">Skip to sign in</a>
       <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
-        <section className="inverse-section hidden px-12 py-12 lg:flex lg:flex-col lg:justify-between xl:px-20 xl:py-16">
-          <Link href="/" className="text-lg font-semibold tracking-[-0.02em] text-inverse-foreground">
-            OpenReply
+        <section className="launch-login-panel relative hidden overflow-hidden px-12 py-12 lg:flex lg:flex-col lg:justify-between xl:px-20 xl:py-16">
+          <div className="login-keywords" aria-hidden="true">
+            <span>LINK</span><span>GUIDE</span><span>PRICE</span>
+          </div>
+          <Link href="/" className="relative z-10 text-lg font-extrabold tracking-[-0.03em] text-white">
+            OpenReply<span className="text-[#e3f23e]">.</span>
           </Link>
 
-          <div className="max-w-xl py-16">
-            <p className="text-sm font-semibold text-inverse-accent">Your first campaign starts here</p>
-            <h2 className="mt-5 text-balance text-5xl font-semibold leading-[1.02] tracking-[-0.035em] xl:text-6xl">
-              Turn high-intent comments into useful conversations.
+          <div className="relative z-10 max-w-xl py-16">
+            <p className="text-sm font-semibold text-[#e3f23e]">Your first campaign starts here</p>
+            <h2 className="mt-5 text-balance text-5xl font-extrabold leading-[0.95] tracking-[-0.04em] xl:text-7xl">
+              They comment. The right DM lands.
             </h2>
-            <ol className="mt-10 space-y-5 border-t border-inverse-border pt-6 text-sm text-inverse-muted">
-              <li className="flex justify-between gap-6 border-b border-inverse-border pb-5">
-                <span className="font-semibold text-inverse-foreground">1. Connect Instagram</span>
+            <ol className="mt-10 space-y-5 border-t border-white/35 pt-6 text-sm text-white/75">
+              <li className="flex justify-between gap-6 border-b border-white/35 pb-5">
+                <span className="font-semibold text-white">1. Connect Instagram</span>
                 <span className="text-right">Official Meta OAuth</span>
               </li>
-              <li className="flex justify-between gap-6 border-b border-inverse-border pb-5">
-                <span className="font-semibold text-inverse-foreground">2. Choose a trigger</span>
+              <li className="flex justify-between gap-6 border-b border-white/35 pb-5">
+                <span className="font-semibold text-white">2. Choose a trigger</span>
                 <span className="text-right">Post, keyword, and reply</span>
               </li>
-              <li className="flex justify-between gap-6 border-b border-inverse-border pb-5">
-                <span className="font-semibold text-inverse-foreground">3. Track the result</span>
+              <li className="flex justify-between gap-6 border-b border-white/35 pb-5">
+                <span className="font-semibold text-white">3. Track the result</span>
                 <span className="text-right">Delivery, clicks, and logs</span>
               </li>
             </ol>
           </div>
 
-          <p className="max-w-xl text-sm leading-6 text-inverse-muted">
+          <p className="relative z-10 max-w-xl text-sm leading-6 text-white/75">
             14 days and 100 DMs free. No card required. Sends stop at your limit, so your bill stays predictable.
           </p>
         </section>
 
-        <section className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
+        <section className="flex min-h-screen items-center justify-center bg-[#eceefe] px-5 py-10 sm:px-8 lg:px-12">
           <div className="w-full max-w-md">
             <Link href="/" className="mb-12 inline-flex text-lg font-semibold tracking-[-0.02em] text-foreground lg:hidden">
               OpenReply
             </Link>
 
             <div className="mb-8">
-              <p className="text-sm font-semibold text-accent">Secure email sign-in</p>
-              <h1 className="mt-3 text-balance text-3xl font-semibold tracking-[-0.03em] text-foreground sm:text-4xl">
+              <p className="text-sm font-bold text-accent">Secure email sign-in</p>
+              <h1 className="mt-3 text-balance text-3xl font-extrabold tracking-[-0.04em] text-foreground sm:text-5xl">
                 {checkEmail ? "Check your inbox" : "Start your OpenReply workspace"}
               </h1>
               <p className="mt-3 text-sm leading-6 text-muted">
@@ -101,7 +104,7 @@ export default async function LoginPage({
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8">
+            <div className="login-form-panel rounded-2xl border-2 border-foreground bg-background p-6 sm:p-8">
           {selectedTemplate && !checkEmail && (
             <div className="accent-callout mb-6 rounded-xl p-4">
               <p className="text-xs font-semibold text-accent-soft-foreground">
@@ -148,7 +151,7 @@ export default async function LoginPage({
                   spellCheck={false}
                   aria-describedby="email-help"
                   placeholder="you@company.com…"
-                  className="min-h-12 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-accent"
+                  className="min-h-12 w-full rounded-xl border-2 border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-accent"
                 />
                 <p id="email-help" className="text-xs leading-5 text-muted">
                   We will send a single-use link. You do not need a password.
