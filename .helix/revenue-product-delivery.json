@@ -49,9 +49,9 @@
     "mode": "required",
     "teamId": "team_pe74HMcqhmeKmVMl8AGbuX2F",
     "projectId": "prj_pH5x3nWVMVsRMCcB8Iln1SKDghDp",
-    "deploymentId": "pending_ux_preview",
-    "deploymentUrl": "pending",
-    "deploymentCommit": "HEAD",
+    "deploymentId": "dpl_9Djmq23HEtHeaZTRQYg5V9WczJ5N",
+    "deploymentUrl": "https://openreply-gtts5iebc-jaime-henriques-projects.vercel.app",
+    "deploymentCommit": "88e5fdd2f9e3e141022a8a5c11789484d9347679",
     "evidence": ".helix/evidence/ux-redesign-vercel.json"
   },
   "verification": {
