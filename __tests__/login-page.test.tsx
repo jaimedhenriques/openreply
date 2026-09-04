@@ -20,8 +20,11 @@ import LoginPage from "../app/login/page";
 
 describe("login page rendering", () => {
   it("renders the default passwordless trial form", async () => {
-    render(await LoginPage({ searchParams: Promise.resolve({}) }));
+    const { container } = render(
+      await LoginPage({ searchParams: Promise.resolve({}) })
+    );
 
+    expect(container.querySelector("main#main-content")).toHaveAttribute("tabindex", "-1");
     expect(
       screen.getByRole("heading", { name: "Start your OpenReply workspace" })
     ).toBeInTheDocument();

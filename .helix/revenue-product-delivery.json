@@ -1,19 +1,19 @@
 {
   "schemaVersion": 2,
-  "project": "OpenReply Cloud",
+  "project": "OpenReply public buyer-path redesign",
   "company": "OpenReply",
   "artifactType": "web-product",
   "icp": "Instagram-first course creators, coaches, newsletter operators, and digital-product sellers using one professional account",
   "pain": "Creators miss high-intent comment leads or pay contact-based automation fees for a broad chatbot suite they do not need",
-  "revenueHypothesis": "Creators will pay GBP 19 monthly or GBP 190 annually for a hosted, predictable-price comment-to-DM service with 5,000 sends and no automatic overages",
+  "revenueHypothesis": "A visually distinct, product-specific buyer path will make the GBP 19 hosted offer easier to understand and increase qualified trial starts once production signup is enabled",
   "mvpAcceptance": [
-    "A visitor can understand the hosted offer, see fixed pricing, and start a 14-day trial from the public site",
-    "An authenticated workspace owner can create Stripe checkout and billing portal sessions without exposing secret values",
-    "Signed Stripe webhooks update subscription state idempotently and invalid signatures are rejected",
-    "Free-trial and Pro plan limits are enforced atomically for monthly DM sends and connected Instagram accounts",
-    "The existing Instagram comment-to-DM, retry, deduplication, tracking, reporting, and worker test suites remain green",
-    "GitHub Actions passes lint, typecheck, tests, and build for the delivered commit",
-    "A Vercel READY deployment bound to the delivered commit passes public pricing, login, privacy, terms, and health buyer-path smoke checks"
+    "The public homepage explains comment-to-DM in the first viewport with one dominant trial action",
+    "The page uses original visual assets and interaction patterns while borrowing only high-level pacing principles from public references",
+    "The homepage and login route are responsive at 390, 768, and 1440 pixel widths with no horizontal overflow",
+    "Text and controls meet WCAG AA contrast and keyboard focus remains visible",
+    "Reduced-motion users receive an equivalent static experience",
+    "The existing application tests, lint, typecheck, Prisma generation, and production build remain green",
+    "A Vercel preview bound to the delivered commit passes homepage and login browser checks"
   ],
   "maker": "codex-openreply-maker",
   "codingTool": "codex",
@@ -41,7 +41,7 @@
   "github": {
     "repo": "jaimedhenriques/openreply",
     "remote": "origin",
-    "branch": "feat/openreply-cloud-launch",
+    "branch": "feat/openreply-buzz-inspired-redesign",
     "baseBranch": "main",
     "commit": "HEAD"
   },
@@ -49,19 +49,19 @@
     "mode": "required",
     "teamId": "team_pe74HMcqhmeKmVMl8AGbuX2F",
     "projectId": "prj_pH5x3nWVMVsRMCcB8Iln1SKDghDp",
-    "deploymentId": "dpl_pending_openreply_launch",
-    "deploymentUrl": "https://openreply-pending.vercel.app",
-    "deploymentCommit": "HEAD",
-    "evidence": "controller://vercel/openreply-cloud-launch"
+    "deploymentId": "dpl_9Djmq23HEtHeaZTRQYg5V9WczJ5N",
+    "deploymentUrl": "https://openreply-gtts5iebc-jaime-henriques-projects.vercel.app",
+    "deploymentCommit": "88e5fdd2f9e3e141022a8a5c11789484d9347679",
+    "evidence": ".helix/evidence/ux-redesign-vercel.json"
   },
   "verification": {
     "checks": [
       {
-        "name": "OpenReply launch checks",
-        "evidence": ".helix/evidence/checks.json"
+        "name": "OpenReply public buyer-path checks",
+        "evidence": ".helix/evidence/ux-redesign-checks.json"
       }
     ],
-    "checker": "openreply-independent-reviewer",
-    "checkerEvidence": "controller://checker/openreply-cloud-launch"
+    "checker": "codex fact-checker role",
+    "checkerEvidence": ".helix/evidence/ux-redesign-review.json"
   }
 }

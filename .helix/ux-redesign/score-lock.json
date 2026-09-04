@@ -1,0 +1,15 @@
+{
+  "locked": true,
+  "version": 1,
+  "maximum": 100,
+  "target": 88,
+  "rubric": [
+    { "id": "first_view", "points": 20, "criterion": "The first viewport explains the trigger, action, outcome, and trial CTA without scrolling." },
+    { "id": "product_proof", "points": 20, "criterion": "A product-specific comment-to-DM artifact demonstrates the workflow using visible states." },
+    { "id": "distinctiveness", "points": 20, "criterion": "The visual system has committed color, recognizable type hierarchy, and a memorable product motif without copied assets." },
+    { "id": "conversion_trust", "points": 15, "criterion": "Pricing, trial terms, official API status, limits, and one primary action are easy to find." },
+    { "id": "interaction_motion", "points": 10, "criterion": "Interaction feedback and motion explain state change and include a reduced-motion equivalent." },
+    { "id": "responsive", "points": 10, "criterion": "The buyer path works without clipping or horizontal overflow at 390, 768, and 1440 pixel widths." },
+    { "id": "accessibility", "points": 5, "criterion": "Semantic headings, visible focus, labels, touch targets, and WCAG AA text contrast are present." }
+  ]
+}
