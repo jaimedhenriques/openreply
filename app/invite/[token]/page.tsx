@@ -10,7 +10,7 @@ type InvitePageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Accept Workspace Invitation - OpenReply",
+  title: "Accept Workspace Invitation - CommentShift",
   robots: { index: false, follow: false },
 };
 
@@ -36,7 +36,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center px-5 py-12">
         <Link href="/" className="mb-8 text-base font-semibold tracking-[-0.02em] text-foreground">
-          OpenReply
+          CommentShift
         </Link>
         <section className="panel rounded-2xl p-6 sm:p-8">
           <p className="text-sm font-semibold text-accent">

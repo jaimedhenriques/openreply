@@ -6,7 +6,7 @@ let stripeClient: Stripe | null = null;
 export function getStripe(): Stripe {
   if (!stripeClient) {
     stripeClient = new Stripe(requireEnv("STRIPE_SECRET_KEY"), {
-      appInfo: { name: "OpenReply", version: "0.1.0" },
+      appInfo: { name: "CommentShift", version: "0.1.0" },
       maxNetworkRetries: 2,
     });
   }

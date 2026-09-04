@@ -111,7 +111,7 @@ export default async function ReportPage({ params }: ReportPageProps) {
                   href="/"
                   className="pressable mt-4 inline-flex min-h-11 items-center justify-center rounded-lg border border-inverse-border px-3 py-2 text-xs font-semibold text-inverse-foreground hover:border-inverse-muted"
                 >
-                  Powered by OpenReply
+                  Powered by CommentShift
                 </Link>
               )}
             </div>
@@ -299,7 +299,7 @@ export default async function ReportPage({ params }: ReportPageProps) {
 
         {report.branded && (
           <footer className="mt-8 border-t border-border pt-6 text-center text-xs text-muted">
-            Built with OpenReply, the Instagram comment-to-DM campaign OS.
+            Built with CommentShift, the Instagram comment-to-DM campaign OS.
           </footer>
         )}
       </section>

@@ -39,7 +39,7 @@ const MESSAGES: Record<string, { tone: Tone; title: string; detail: string }> = 
     tone: "warning",
     title: "Instagram account limit reached",
     detail:
-      "OpenReply Pro includes one Instagram professional account. Disconnect the current account before connecting a different one.",
+      "CommentShift Pro includes one Instagram professional account. Disconnect the current account before connecting a different one.",
   },
   workspace_not_found: {
     tone: "error",

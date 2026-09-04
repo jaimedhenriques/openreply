@@ -39,10 +39,10 @@ export default function PublicSiteHeader({ active }: PublicSiteHeaderProps) {
         <Link
           href="/"
           className="inline-flex min-h-11 items-center rounded-lg pr-2"
-          aria-label="OpenReply home"
+          aria-label="CommentShift home"
         >
           <span className={`text-lg font-extrabold tracking-[-0.03em] ${isLaunch ? "text-white" : "text-foreground"}`}>
-            OpenReply<span className={isLaunch ? "text-[#e3f23e]" : "text-accent"}>.</span>
+            CommentShift<span className={isLaunch ? "text-[#e3f23e]" : "text-accent"}>.</span>
           </span>
         </Link>
 

@@ -25,7 +25,7 @@ export async function generateMetadata({
 
   if (!template) {
     return {
-      title: "Template Not Found - OpenReply",
+      title: "Template Not Found - CommentShift",
     };
   }
 
@@ -161,7 +161,7 @@ export default async function TemplateDetailPage({ params }: TemplatePageProps) 
             <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
                 <h2 className="text-2xl font-bold tracking-[-0.02em] text-foreground">
-                  Copy this campaign into OpenReply
+                  Copy this campaign into CommentShift
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-muted">
                   Sign in, connect Instagram, pick a post or reel, and start with

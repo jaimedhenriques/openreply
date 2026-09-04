@@ -1,13 +1,13 @@
 import type { MetadataRoute } from "next";
 
-// Lets OpenReply be installed to the home screen: on iOS via
+// Lets CommentShift be installed to the home screen: on iOS via
 // Share -> "Add to Home Screen", on Android through the install prompt. It then
 // opens standalone, without browser chrome, which makes checking campaigns from
 // a phone practical.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "OpenReply",
-    short_name: "OpenReply",
+    name: "CommentShift",
+    short_name: "CommentShift",
     description: "Instagram comment-to-DM automation",
     start_url: "/overview",
     display: "standalone",

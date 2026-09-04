@@ -5,7 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Login - OpenReply",
+  title: "Login - CommentShift",
   description: "Sign in to manage Instagram comment-to-DM campaigns.",
 };
 
@@ -57,7 +57,7 @@ export default async function LoginPage({
             <span>LINK</span><span>GUIDE</span><span>PRICE</span>
           </div>
           <Link href="/" className="relative z-10 text-lg font-extrabold tracking-[-0.03em] text-white">
-            OpenReply<span className="text-[#e3f23e]">.</span>
+            CommentShift<span className="text-[#e3f23e]">.</span>
           </Link>
 
           <div className="relative z-10 max-w-xl py-16">
@@ -89,13 +89,13 @@ export default async function LoginPage({
         <section className="flex min-h-screen items-center justify-center bg-[#eceefe] px-5 py-10 sm:px-8 lg:px-12">
           <div className="w-full max-w-md">
             <Link href="/" className="mb-12 inline-flex text-lg font-semibold tracking-[-0.02em] text-foreground lg:hidden">
-              OpenReply
+              CommentShift
             </Link>
 
             <div className="mb-8">
               <p className="text-sm font-bold text-accent">Secure email sign-in</p>
               <h1 className="mt-3 text-balance text-3xl font-extrabold tracking-[-0.04em] text-foreground sm:text-5xl">
-                {checkEmail ? "Check your inbox" : "Start your OpenReply workspace"}
+                {checkEmail ? "Check your inbox" : "Start your CommentShift workspace"}
               </h1>
               <p className="mt-3 text-sm leading-6 text-muted">
                 {selectedTemplate

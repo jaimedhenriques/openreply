@@ -508,7 +508,7 @@ export default function SettingsPage() {
               {isSelfHosted
                 ? "Self-hosted"
                 : hasActivePro
-                ? "OpenReply Pro"
+                ? "CommentShift Pro"
                 : new Date(data?.workspace.trialEndsAt ?? 0) > new Date()
                   ? "Free trial"
                   : "Trial ended"}

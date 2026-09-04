@@ -106,7 +106,7 @@ export default function Sidebar({
             onClick={onClose}
             className="inline-flex min-h-11 items-center text-base font-semibold"
           >
-            OpenReply
+            CommentShift
           </Link>
           <button
             ref={closeButtonRef}
