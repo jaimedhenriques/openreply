@@ -107,7 +107,7 @@ export default function SeoPageShell({ config }: { config: SeoPageConfig }) {
           >
             <table className="w-full min-w-[42rem] border-collapse text-left">
               <caption className="sr-only">
-                A comparison of OpenReply and generic automation by campaign need.
+                A comparison of CommentShift and generic automation by campaign need.
               </caption>
               <thead className="bg-surface">
                 <tr className="border-b border-border">
@@ -115,7 +115,7 @@ export default function SeoPageShell({ config }: { config: SeoPageConfig }) {
                     Campaign need
                   </th>
                   <th scope="col" className="w-[36%] px-5 py-4 text-sm font-bold text-accent">
-                    OpenReply
+                    CommentShift
                   </th>
                   <th scope="col" className="w-[36%] px-5 py-4 text-sm font-semibold text-muted">
                     Generic automation
@@ -191,7 +191,7 @@ export default function SeoPageShell({ config }: { config: SeoPageConfig }) {
             Turn the next high-intent comment into a private reply
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-inverse-muted">
-            OpenReply uses official Meta private replies and campaign reporting
+            CommentShift uses official Meta private replies and campaign reporting
             your team can act on.
           </p>
           <Link

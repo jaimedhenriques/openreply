@@ -1,8 +1,8 @@
 <div align="center">
 
-# OpenReply Cloud
+# OpenReply
 
-Hosted Instagram comment-to-DM automation with predictable pricing.
+OpenReply is the MIT-licensed automation engine and repository. The hosted commercial service is **CommentShift**.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/jaimedhenriques/openreply?style=flat&color=black)](https://github.com/jaimedhenriques/openreply/stargazers)
@@ -10,9 +10,9 @@ Hosted Instagram comment-to-DM automation with predictable pricing.
 
 </div>
 
-Someone comments `LINK` on your reel, and OpenReply sends the right private reply through the official Meta API. The hosted service adds signup, a 14-day trial, Stripe billing, fixed monthly usage, and a managed deployment around the MIT-licensed automation core.
+Someone comments `LINK` on your reel, and the OpenReply engine sends the right private reply through the official Meta API. CommentShift adds signup, a 14-day trial, Stripe billing, fixed monthly usage, and a managed deployment around that core.
 
-OpenReply Pro costs £19 monthly or £190 yearly. It includes 1 Instagram professional account, unlimited campaigns, 3 workspace members, and 5,000 DMs each month. Sends stop at the limit, so there are no automatic overages.
+CommentShift Pro costs £19 monthly or £190 yearly. It includes 1 Instagram professional account, unlimited campaigns, 3 workspace members, and 5,000 DMs each month. Sends stop at the limit, so there are no automatic overages.
 
 > **Private launch status**
 >

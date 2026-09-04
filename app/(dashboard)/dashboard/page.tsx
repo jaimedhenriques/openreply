@@ -192,7 +192,7 @@ export default function DashboardPage() {
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
               {needsInstagram
-                ? "OpenReply needs one professional Instagram account before it can watch comments and send the right DM."
+                ? "CommentShift needs one professional Instagram account before it can watch comments and send the right DM."
                 : "Choose a post, define the trigger words, and write the message people receive. You can review everything before activating it."}
             </p>
             {needsInstagram ? (

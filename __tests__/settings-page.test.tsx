@@ -167,7 +167,7 @@ describe("settings page", () => {
 
     render(<SettingsPage />);
 
-    expect(await screen.findByRole("heading", { name: "OpenReply Pro" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "CommentShift Pro" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Manage billing" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Send invite" })).toBeEnabled();
   });

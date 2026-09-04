@@ -7,7 +7,7 @@ import { isEmailAllowedToSignIn } from "@/lib/env";
 
 type AdapterPrismaClient = Parameters<typeof PrismaAdapter>[0];
 
-const emailFrom = process.env.EMAIL_FROM ?? "OpenReply <login@example.com>";
+const emailFrom = process.env.EMAIL_FROM ?? "CommentShift <login@example.com>";
 export const EMAIL_PROVIDER_ID = "resend";
 
 export const authConfig = {

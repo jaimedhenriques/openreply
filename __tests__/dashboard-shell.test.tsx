@@ -90,7 +90,7 @@ describe("dashboard shell navigation", () => {
     renderShell();
     await user.click(screen.getByRole("button", { name: "Open navigation" }));
     const dialog = screen.getByRole("dialog", { name: "Dashboard navigation" });
-    const firstLink = within(dialog).getByRole("link", { name: "OpenReply" });
+    const firstLink = within(dialog).getByRole("link", { name: "CommentShift" });
     const lastLink = within(dialog).getByRole("link", { name: "Diagnostics" });
 
     lastLink.focus();

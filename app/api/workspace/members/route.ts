@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error:
           entitlement === "PRO"
-            ? "OpenReply Pro includes 3 workspace members."
+            ? "CommentShift Pro includes 3 workspace members."
             : "Upgrade to Pro before inviting teammates.",
         code: "PLAN_LIMIT",
       },

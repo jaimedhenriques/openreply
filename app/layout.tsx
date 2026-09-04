@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXTAUTH_URL ?? "http://localhost:3000"),
-  title: "OpenReply - Instagram comment-to-DM automation",
+  title: "CommentShift - Instagram comment-to-DM automation",
   description:
     "Hosted Instagram comment-to-DM campaigns with tracked links, reporting, and predictable pricing.",
   keywords: [
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "OpenReply",
+    title: "CommentShift",
     statusBarStyle: "black-translucent",
   },
   icons: {
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "OpenReply - Instagram comment-to-DM automation",
+    title: "CommentShift - Instagram comment-to-DM automation",
     description:
       "Turn keyword comments into tracked private replies with predictable pricing.",
     type: "website",

@@ -3,9 +3,9 @@ import Link from "next/link";
 import PublicSiteHeader from "@/components/public-site-header";
 
 export const metadata: Metadata = {
-  title: "OpenReply - Turn Instagram comments into the right DMs",
+  title: "CommentShift - Turn Instagram comments into the right DMs",
   description:
-    "When someone comments your keyword, OpenReply sends the right Instagram DM, tracks the click, and shows you what happened.",
+    "When someone comments your keyword, CommentShift sends the right Instagram DM, tracks the click, and shows you what happened.",
 };
 
 const flowSteps = [
@@ -18,7 +18,7 @@ const flowSteps = [
   {
     number: "02",
     state: "Match",
-    title: "OpenReply catches it",
+    title: "CommentShift catches it",
     body: "The official Instagram API sends the event. Your campaign matches the keyword and queues the reply.",
   },
   {
@@ -252,7 +252,7 @@ export default function Home() {
       <section id="pricing" className="launch-pricing">
         <div className="launch-shell pricing-grid">
           <div className="pricing-price">
-            <p>OpenReply Pro</p>
+            <p>CommentShift Pro</p>
             <div><strong>£19</strong><span>/ month</span></div>
             <p>or £190 yearly</p>
           </div>
@@ -289,7 +289,7 @@ export default function Home() {
 
       <footer className="launch-footer">
         <div className="launch-shell launch-footer-inner">
-          <span className="launch-footer-brand">OpenReply<span>.</span></span>
+          <span className="launch-footer-brand">CommentShift<span>.</span></span>
           <p>Focused Instagram comment-to-DM automation.</p>
           <nav aria-label="Footer navigation">
             <Link href="/templates">Templates</Link>

@@ -1,19 +1,22 @@
 {
   "schemaVersion": 2,
-  "project": "OpenReply public buyer-path redesign",
-  "company": "OpenReply",
+  "project": "CommentShift production launch",
+  "company": "CommentShift",
   "artifactType": "web-product",
   "icp": "Instagram-first course creators, coaches, newsletter operators, and digital-product sellers using one professional account",
   "pain": "Creators miss high-intent comment leads or pay contact-based automation fees for a broad chatbot suite they do not need",
-  "revenueHypothesis": "A visually distinct, product-specific buyer path will make the GBP 19 hosted offer easier to understand and increase qualified trial starts once production signup is enabled",
+  "revenueHypothesis": "Creators will pay GBP 19 monthly or GBP 190 annually for CommentShift when signup, Instagram connection, comment-to-DM delivery, tracked links, and billing work as one hosted service",
   "mvpAcceptance": [
-    "The public homepage explains comment-to-DM in the first viewport with one dominant trial action",
-    "The page uses original visual assets and interaction patterns while borrowing only high-level pacing principles from public references",
-    "The homepage and login route are responsive at 390, 768, and 1440 pixel widths with no horizontal overflow",
-    "Text and controls meet WCAG AA contrast and keyboard focus remains visible",
-    "Reduced-motion users receive an equivalent static experience",
+    "Railway production contains healthy PostgreSQL, Redis, and one continuously running delivery worker",
+    "Vercel production has the matching database, Redis, encryption, authentication, Resend, Meta, and Stripe configuration without secret exposure",
+    "All Prisma migrations are deployed to the production PostgreSQL database",
+    "The commercial UI is branded CommentShift while the MIT-licensed OpenReply repository and engine attribution remain intact",
+    "A visitor can sign up through a delivered Resend magic link and reach an authenticated workspace",
+    "A Meta tester can connect one Instagram professional account and a real keyword comment creates a sent private reply",
+    "The private reply contains a tracked link whose click is recorded",
+    "Stripe test checkout completes and its signed webhook changes the workspace subscription state",
     "The existing application tests, lint, typecheck, Prisma generation, and production build remain green",
-    "A Vercel preview bound to the delivered commit passes homepage and login browser checks"
+    "GitHub Actions and a Vercel READY deployment are bound to the delivered commit"
   ],
   "maker": "codex-openreply-maker",
   "codingTool": "codex",
@@ -41,7 +44,7 @@
   "github": {
     "repo": "jaimedhenriques/openreply",
     "remote": "origin",
-    "branch": "feat/openreply-buzz-inspired-redesign",
+    "branch": "launch/production-readiness",
     "baseBranch": "main",
     "commit": "HEAD"
   },
@@ -49,19 +52,19 @@
     "mode": "required",
     "teamId": "team_pe74HMcqhmeKmVMl8AGbuX2F",
     "projectId": "prj_pH5x3nWVMVsRMCcB8Iln1SKDghDp",
-    "deploymentId": "dpl_9Djmq23HEtHeaZTRQYg5V9WczJ5N",
-    "deploymentUrl": "https://openreply-gtts5iebc-jaime-henriques-projects.vercel.app",
-    "deploymentCommit": "88e5fdd2f9e3e141022a8a5c11789484d9347679",
-    "evidence": ".helix/evidence/ux-redesign-vercel.json"
+    "deploymentId": "pending-commentshift-production-launch",
+    "deploymentUrl": "https://openreply-six-pied.vercel.app",
+    "deploymentCommit": "HEAD",
+    "evidence": ".helix/evidence/commentshift-production-vercel.json"
   },
   "verification": {
     "checks": [
       {
-        "name": "OpenReply public buyer-path checks",
-        "evidence": ".helix/evidence/ux-redesign-checks.json"
+        "name": "CommentShift production launch checks",
+        "evidence": ".helix/evidence/commentshift-production-checks.json"
       }
     ],
     "checker": "codex fact-checker role",
-    "checkerEvidence": ".helix/evidence/ux-redesign-review.json"
+    "checkerEvidence": ".helix/evidence/commentshift-production-review.json"
   }
 }

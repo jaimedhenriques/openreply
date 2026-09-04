@@ -26,7 +26,7 @@ describe("login page rendering", () => {
 
     expect(container.querySelector("main#main-content")).toHaveAttribute("tabindex", "-1");
     expect(
-      screen.getByRole("heading", { name: "Start your OpenReply workspace" })
+      screen.getByRole("heading", { name: "Start your CommentShift workspace" })
     ).toBeInTheDocument();
     expect(screen.getByRole("textbox", { name: "Work email" })).toHaveAttribute(
       "autocomplete",
